@@ -131,7 +131,7 @@ function loadAlbum(album) {
         const box = document.createElement("div");
         box.className = "photo-box";
         const img = document.createElement("img");
-        img.src = `http://localhost/photo-gallery/Galeri/${album}/${filename}`;
+        img.src = `Galeri/${album}/${filename}`;
         img.alt = filename;
         img.onclick = () => showOverlay(idx);
         box.appendChild(img);
@@ -147,7 +147,7 @@ function loadAlbum(album) {
 function showOverlay(index) {
   overlay.style.display = "flex";
   currentIndex = index;
-  overlayImage.src = `http://localhost/photo-gallery/Galeri/${currentAlbum}/${currentImages[index]}`;
+  overlayImage.src = `Galeri/${currentAlbum}/${currentImages[index]}`;
   imageCounter.textContent = `(${index + 1}/${currentImages.length})`;
 }
 
