@@ -92,7 +92,7 @@
     <span id="imageCounter"></span>
   </div>
 
-  <script>
+<script>
 const menu = document.getElementById("menu");
 const gallery = document.getElementById("gallery");
 const overlay = document.getElementById("overlay");
@@ -105,23 +105,22 @@ let currentImages = [];
 
 fetch("Galeri/albums.json")
   .then(res => {
-    if (!res.ok) throw new Error("Albüm listesi yüklenemedii");
+    if (!res.ok) throw new Error("Albüm listesi yüklenemedi");
     return res.json();
   })
   .then(albums => {
     albums.forEach(album => {
       const div = document.createElement("div");
       div.textContent = album;
-      div.onclick = () => loadAlbum(album);  // loadAlbum fonksiyonu burada kullanılıyor
+      div.onclick = () => loadAlbum(album);
       menu.appendChild(div);
     });
   })
   .catch(err => {
     console.error("Albüm listesi yüklenemedi", err);
-    menu.innerHTML = "Albüm listesi yüklenemedii.";
+    menu.innerHTML = "Albüm listesi yüklenemedi.";
   });
 
-// Album yükleme fonksiyonu
 function loadAlbum(album) {
   gallery.innerHTML = "Yükleniyor...";
   fetch(`Galeri/${album}/index.json`)
@@ -161,19 +160,25 @@ function hideOverlay() {
   overlay.style.display = "none";
 }
 
+// Sağ tıklamayı engelle
 document.addEventListener("contextmenu", e => e.preventDefault());
+
+// Klavye ile gezinme
 document.addEventListener("keydown", e => {
   if (overlay.style.display === "flex") {
     if (e.key === "ArrowRight") showOverlay((currentIndex + 1) % currentImages.length);
     if (e.key === "ArrowLeft") showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
     if (e.key === "Escape") hideOverlay();
   }
-  document.addEventListener("dragstart", function(e) {
+});
+
+// Sürükle bırak engelleme
+document.addEventListener("dragstart", function(e) {
   if (e.target.tagName === "IMG") {
     e.preventDefault();
   }
 });
+</script>
 
-  </script>
 </body>
 </html>
