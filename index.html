@@ -118,7 +118,7 @@ fetch("http://localhost/photo-gallery/Galeri/albums.json")
 // Album yükleme fonksiyonu
 function loadAlbum(album) {
   gallery.innerHTML = "Yükleniyor...";
-  fetch(`http://localhost/photo-gallery/Galeri/${album}/index.json`)
+  fetch(`Galeri/${album}/index.json`)
     .then(res => {
       if (!res.ok) throw new Error("Fotoğraflar yüklenemedi");
       return res.json();
