@@ -97,7 +97,7 @@ let currentAlbum = "";
 let currentIndex = 0;
 let currentImages = [];
 
-fetch("http://localhost/photo-gallery/Galeri/albums.json")
+fetch("Galeri/albums.json")
   .then(res => {
     if (!res.ok) throw new Error("Albüm listesi yüklenemedii");
     return res.json();
