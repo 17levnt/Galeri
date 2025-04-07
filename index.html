@@ -161,6 +161,10 @@ document.addEventListener("keydown", e => {
     if (e.key === "ArrowRight") showOverlay((currentIndex + 1) % currentImages.length);
     if (e.key === "ArrowLeft") showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
     if (e.key === "Escape") hideOverlay();
+
+    document.addEventListener("dragstart", function(e) {
+  if (e.target.tagName === "IMG") {
+    e.preventDefault();
   }
 });
 
