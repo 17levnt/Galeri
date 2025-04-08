@@ -31,7 +31,6 @@
     background: #f5f5f5;
   }
 
-  /* GÜNCELLENEN GALERİ STİLİ */
   #gallery {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -72,6 +71,7 @@
     outline: 0px solid #333;
     outline-offset: -2px;
   }
+
   #overlay {
     position: fixed;
     top: 0; left: 0;
@@ -91,46 +91,58 @@
     color: #fff;
     margin-top: 10px;
   }
+
   img {
     user-drag: none;
     user-select: none;
     -webkit-user-drag: none;
     -webkit-user-select: none;
   }
-    #closeBtn, #prevBtn, #nextBtn {
-  position: absolute;
-  color: #fff;
-  font-size: 32px;
-  background: rgba(0, 0, 0, 0.5);
-  border: none;
-  padding: 10px 14px;
-  cursor: pointer;
-  z-index: 1001;
-  user-select: none;
-}
 
-#closeBtn {
-  top: 10px;
-  right: 20px;
-}
+  #closeBtn, #prevBtn, #nextBtn {
+    position: absolute;
+    color: #fff;
+    font-size: 32px;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    padding: 10px 14px;
+    cursor: pointer;
+    z-index: 1001;
+    user-select: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
-#prevBtn {
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-}
+  #overlay:hover #closeBtn,
+  #overlay:hover #prevBtn,
+  #overlay:hover #nextBtn {
+    opacity: 1;
+  }
 
-#nextBtn {
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-}
+  #closeBtn {
+    top: 10px;
+    right: 20px;
+  }
 
-#closeBtn:hover, #prevBtn:hover, #nextBtn:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
+  #prevBtn {
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 
+  #nextBtn {
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  #closeBtn:hover,
+  #prevBtn:hover,
+  #nextBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
 </style>
+
 
 </head>
 <body>
