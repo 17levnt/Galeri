@@ -97,16 +97,51 @@
     -webkit-user-drag: none;
     -webkit-user-select: none;
   }
+    #closeBtn, #prevBtn, #nextBtn {
+  position: absolute;
+  color: #fff;
+  font-size: 32px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  z-index: 1001;
+  user-select: none;
+}
+
+#closeBtn {
+  top: 10px;
+  right: 20px;
+}
+
+#prevBtn {
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#nextBtn {
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#closeBtn:hover, #prevBtn:hover, #nextBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 </style>
 
 </head>
 <body>
-  <div id="menu"></div>
-  <div id="gallery"></div>
-  <div id="overlay" onclick="hideOverlay()">
-    <img id="overlayImage" src="">
-    <span id="imageCounter"></span>
-  </div>
+  <div id="overlay">
+  <button id="closeBtn">✕</button>
+  <button id="prevBtn">‹</button>
+  <img id="overlayImage" src="" alt="">
+  <button id="nextBtn">›</button>
+  <span id="imageCounter"></span>
+</div>
+
 
 <script>
 const menu = document.getElementById("menu");
@@ -114,6 +149,14 @@ const gallery = document.getElementById("gallery");
 const overlay = document.getElementById("overlay");
 const overlayImage = document.getElementById("overlayImage");
 const imageCounter = document.getElementById("imageCounter");
+const closeBtn = document.getElementById("closeBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+closeBtn.onclick = hideOverlay;
+prevBtn.onclick = () => showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
+nextBtn.onclick = () => showOverlay((currentIndex + 1) % currentImages.length);
+
 
 let currentAlbum = "";
 let currentIndex = 0;
