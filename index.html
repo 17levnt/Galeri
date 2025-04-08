@@ -5,84 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fotoğraf Galerimi</title>
   <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      background-color: #555;
-    }
-    #menu {
-      position: fixed;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 100;
-    }
-    #menu div {
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 8px 12px;
-      cursor: pointer;
-      text-align: center;
-    }
-    #menu div:hover {
-      background: #f5f5f5;
-    }
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #555;
+  }
+  #menu {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+  }
+  #menu div {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    cursor: pointer;
+    text-align: center;
+  }
+  #menu div:hover {
+    background: #f5f5f5;
+  }
+
+  /* GÜNCELLENEN GALERİ STİLİ */
+  #gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 480px) {
     #gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      padding: 40px;
-      max-width: 1000px;
-      margin: 0 auto;
+      grid-template-columns: repeat(2, 1fr);
     }
-    .photo-box {
-      aspect-ratio: 1/1;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #555;
-      padding: 20px;
+  }
+
+  @media (min-width: 1200px) {
+    #gallery {
+      grid-template-columns: repeat(4, 1fr);
     }
-    .photo-box img {
-      max-width: 100%;
-      max-height: 100%;
-      cursor: pointer;
-      border: none;
-    }
-    .photo-box img:hover {
-      outline: 0px solid #333;
-      outline-offset: -2px;
-    }
-    #overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      z-index: 1000;
-    }
-    #overlay img {
-      max-width: 90vw;
-      max-height: 90vh;
-    }
-    #overlay span {
-      color: #fff;
-      margin-top: 10px;
-    }
-    img {
-      user-drag: none;
-      user-select: none;
-      -webkit-user-drag: none;
-      -webkit-user-select: none;
-    }
-  </style>
+  }
+
+  .photo-box {
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #555;
+    padding: 20px;
+  }
+  .photo-box img {
+    max-width: 100%;
+    max-height: 100%;
+    cursor: pointer;
+    border: none;
+  }
+  .photo-box img:hover {
+    outline: 0px solid #333;
+    outline-offset: -2px;
+  }
+  #overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 1000;
+  }
+  #overlay img {
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+  #overlay span {
+    color: #fff;
+    margin-top: 10px;
+  }
+  img {
+    user-drag: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+  }
+</style>
+
 </head>
 <body>
   <div id="menu"></div>
