@@ -72,11 +72,6 @@
       border: none;
     }
 
-    .photo-box img:hover {
-      outline: 0px solid #333;
-      outline-offset: -2px;
-    }
-
     #overlay {
       position: fixed;
       top: 0; left: 0;
@@ -121,9 +116,9 @@
       transition: opacity 0.3s ease;
     }
 
-    #overlay:hover #closeBtn,
-    #overlay:hover #prevBtn,
-    #overlay:hover #nextBtn {
+    #overlay.show-controls #closeBtn,
+    #overlay.show-controls #prevBtn,
+    #overlay.show-controls #nextBtn {
       opacity: 1;
       pointer-events: auto;
     }
@@ -153,6 +148,7 @@
   </style>
 </head>
 <body>
+
   <div id="menu"></div>
 
   <div id="gallery"></div>
@@ -178,6 +174,7 @@
     let currentAlbum = "";
     let currentIndex = 0;
     let currentImages = [];
+    let controlsVisible = true;
 
     closeBtn.onclick = hideOverlay;
     prevBtn.onclick = () => showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
@@ -231,6 +228,8 @@
 
     function showOverlay(index) {
       overlay.style.display = "flex";
+      overlay.classList.add("show-controls");
+      controlsVisible = true;
       currentIndex = index;
       overlayImage.src = `Galeri/${currentAlbum}/${currentImages[index]}`;
       imageCounter.textContent = `(${index + 1}/${currentImages.length})`;
@@ -240,8 +239,20 @@
       overlay.style.display = "none";
     }
 
+    // Toggle kontrol görünürlüğü
+    overlayImage.addEventListener("click", () => {
+      controlsVisible = !controlsVisible;
+      if (controlsVisible) {
+        overlay.classList.add("show-controls");
+      } else {
+        overlay.classList.remove("show-controls");
+      }
+    });
+
+    // Sağ tıklamayı engelle
     document.addEventListener("contextmenu", e => e.preventDefault());
 
+    // Klavye ile gezinme
     document.addEventListener("keydown", e => {
       if (overlay.style.display === "flex") {
         if (e.key === "ArrowRight") showOverlay((currentIndex + 1) % currentImages.length);
@@ -250,6 +261,7 @@
       }
     });
 
+    // Sürükle bırak engelleme
     document.addEventListener("dragstart", function(e) {
       if (e.target.tagName === "IMG") {
         e.preventDefault();
