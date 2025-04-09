@@ -10,6 +10,11 @@
       font-family: sans-serif;
       background-color: #555;
     }
+    body.no-scroll {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+    }
 
     #menu {
       position: fixed;
@@ -244,6 +249,8 @@
       overlay.style.display = "flex";
       overlay.classList.add("show-controls");
       overlay.classList.remove("hide-controls");
+      document.body.classList.add("no-scroll");
+      document.body.addEventListener("touchmove", preventScroll, { passive: false });
       controlsVisible = true;
       currentIndex = index;
       overlayImage.src = `Galeri/${currentAlbum}/${currentImages[index]}`;
@@ -252,6 +259,8 @@
 
     function hideOverlay() {
       overlay.style.display = "none";
+      document.body.classList.remove("no-scroll");
+      document.body.removeEventListener("touchmove", preventScroll);
     }
 
     // Toggle kontrol görünürlüğü (tıklama)
