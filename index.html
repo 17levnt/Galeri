@@ -262,6 +262,12 @@
       overlay.classList.toggle("show-controls", controlsVisible);
       overlay.classList.toggle("hide-controls", !controlsVisible);
     });
+    // Toggle kontrol görünürlüğü (dokunma)
+    overlayImage.addEventListener("touchend", (e) => {
+      e.stopPropagation();
+      overlay.classList.toggle("show-controls", controlsVisible);
+      overlay.classList.toggle("hide-controls", !controlsVisible);
+    });
 
     // Sağ tıklamayı engelle
     document.addEventListener("contextmenu", e => e.preventDefault());
