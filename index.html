@@ -89,6 +89,7 @@
     #overlay img {
       max-width: 90vw;
       max-height: 90vh;
+      transition: max-width 0.3s, max-height 0.3s;
     }
 
     #overlay span {
@@ -192,6 +193,7 @@
     let currentIndex = 0;
     let currentImages = [];
     let controlsVisible = true;
+    let hoverTimeout;
 
     closeBtn.onclick = hideOverlay;
     prevBtn.onclick = () => showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
@@ -281,36 +283,45 @@
 
     overlay.addEventListener("dblclick", (e) => {
       e.preventDefault();
-      overlayImage.style.maxWidth = overlayImage.style.maxWidth === "100%" ? "90vw" : "100%";
-      overlayImage.style.maxHeight = overlayImage.style.maxHeight === "100%" ? "90vh" : "100%";
+      // Fotoğrafı büyütme/dönüştürme işlevi
+      if (overlayImage.style.maxWidth === "100%") {
+        overlayImage.style.maxWidth = "90vw";
+        overlayImage.style.maxHeight = "90vh";
+      } else {
+        overlayImage.style.maxWidth = "100%";
+        overlayImage.style.maxHeight = "100%";
+      }
     });
 
-    let lastTouch = 0;
-    overlay.addEventListener("touchend", e => {
-      const now = new Date().getTime();
-      if (now - lastTouch <= 300) {
-        e.preventDefault();
+    // İmleç fotoğrafın dışına çıktığında kontrolleri göster
+    overlay.addEventListener("mousemove", (e) => {
+      clearTimeout(hoverTimeout);
+      if (e.target === overlayImage) {
+        prevBtn.style.opacity = 0;
+        nextBtn.style.opacity = 0;
+        prevBtn.style.pointerEvents = "none";
+        nextBtn.style.pointerEvents = "none";
+      } else {
+        prevBtn.style.opacity = 1;
+        nextBtn.style.opacity = 1;
+        prevBtn.style.pointerEvents = "auto";
+        nextBtn.style.pointerEvents = "auto";
       }
-      lastTouch = now;
-    }, { passive: false });
+    });
 
-    // Kontrollerin görünürlüğü için 2 saniye gecikme
-    let controlTimeout;
-    overlay.addEventListener("click", () => {
-      controlsVisible = !controlsVisible;
-      overlay.classList.toggle("show-controls", controlsVisible);
-      overlay.classList.toggle("hide-controls", !controlsVisible);
-
-      // 2 saniye sonra kontrolleri gizle
-      clearTimeout(controlTimeout);
-      controlTimeout = setTimeout(() => {
-        overlay.classList.remove("show-controls");
-        overlay.classList.add("hide-controls");
+    // İmleç hareketi durduktan 2 saniye sonra kontrolleri gizle
+    overlay.addEventListener("mousemove", () => {
+      clearTimeout(hoverTimeout);
+      hoverTimeout = setTimeout(() => {
+        prevBtn.style.opacity = 0;
+        nextBtn.style.opacity = 0;
+        prevBtn.style.pointerEvents = "none";
+        nextBtn.style.pointerEvents = "none";
       }, 2000);
     });
 
-    // Gezinme butonlarını eklemek için sol ve sağ alanlar
-    document.addEventListener("mousemove", (e) => {
+    // Sağ ve sol gezinme butonlarının görünürlüğü için
+    overlay.addEventListener("mousemove", (e) => {
       if (e.clientX < window.innerWidth * 0.25 || e.clientX > window.innerWidth * 0.75) {
         prevBtn.style.opacity = 1;
         nextBtn.style.opacity = 1;
