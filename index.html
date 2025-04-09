@@ -106,13 +106,6 @@
       opacity: 0;
     }
 
-    img {
-      user-drag: none;
-      user-select: none;
-      -webkit-user-drag: none;
-      -webkit-user-select: none;
-    }
-
     #closeBtn, #prevBtn, #nextBtn {
       position: absolute;
       color: #fff;
@@ -237,7 +230,10 @@
             const img = document.createElement("img");
             img.src = `Galeri/${album}/${filename}`;
             img.alt = filename;
-            img.onclick = () => showOverlay(idx);
+            img.onclick = (e) => {
+              e.stopPropagation();
+              showOverlay(idx);
+            };
             box.appendChild(img);
             gallery.appendChild(box);
           });
@@ -292,15 +288,11 @@
       }
     });
 
-    // İmleç fotoğrafın dışına çıktığında kontrolleri göster
-    overlay.addEventListener("mousemove", () => {
-      clearTimeout(hoverTimeout);
-      hoverTimeout = setTimeout(() => {
-        prevBtn.style.opacity = 0;
-        nextBtn.style.opacity = 0;
-        prevBtn.style.pointerEvents = "none";
-        nextBtn.style.pointerEvents = "none";
-      }, 2000);
+    // Fotoğraf sağ tıklama engellenmesi
+    document.addEventListener("contextmenu", (e) => {
+      if (e.target.tagName === "IMG") {
+        e.preventDefault();
+      }
     });
   </script>
 </body>
