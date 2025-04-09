@@ -245,6 +245,11 @@
         });
     }
 
+   function preventScroll(e) {
+          e.preventDefault();
+    }
+
+
     function showOverlay(index) {
       overlay.style.display = "flex";
       overlay.classList.add("show-controls");
