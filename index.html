@@ -203,12 +203,17 @@
         return res.json();
       })
       .then(albums => {
+        if (albums.length === 0) {
+          menu.innerHTML = "Albüm bulunamadı.";
+          return;
+        }
         albums.forEach(album => {
           const div = document.createElement("div");
           div.textContent = album;
           div.onclick = () => loadAlbum(album);
           menu.appendChild(div);
         });
+        loadAlbum(albums[0]);
       })
       .catch(err => {
         console.error("Albüm listesi yüklenemedi", err);
