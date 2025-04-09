@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fotoğraf Galerim</title>
+  <link rel="icon" type="image/png" href="favicon.png"/>
   <style>
     body {
       margin: 0;
@@ -256,17 +257,14 @@
       overlay.style.display = "none";
     }
 
-    // Toggle kontrol görünürlüğü (tıklama)
-    overlayImage.addEventListener("click", () => {
+    overlay.addEventListener("click", () => {
       controlsVisible = !controlsVisible;
       overlay.classList.toggle("show-controls", controlsVisible);
       overlay.classList.toggle("hide-controls", !controlsVisible);
     });
 
-    // Sağ tıklamayı engelle
     document.addEventListener("contextmenu", e => e.preventDefault());
 
-    // Klavye ile gezinme
     document.addEventListener("keydown", e => {
       if (overlay.style.display === "flex") {
         if (e.key === "ArrowRight") showOverlay((currentIndex + 1) % currentImages.length);
@@ -275,21 +273,18 @@
       }
     });
 
-    // Sürükle bırak engelleme
     document.addEventListener("dragstart", function(e) {
       if (e.target.tagName === "IMG") {
         e.preventDefault();
       }
     });
 
-    // Çift tıklama zoom'u engelle
-    overlayImage.addEventListener("dblclick", (e) => {
+    overlay.addEventListener("dblclick", (e) => {
       e.preventDefault();
     });
 
-    // Mobilde çift dokunmayı engelle
     let lastTouch = 0;
-    overlayImage.addEventListener("touchend", e => {
+    overlay.addEventListener("touchend", e => {
       const now = new Date().getTime();
       if (now - lastTouch <= 300) {
         e.preventDefault();
