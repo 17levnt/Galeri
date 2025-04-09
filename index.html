@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fotoğraf Galerim</title>
-  <link rel="icon" type="image/png" href="favicon.png"/>
   <style>
     body {
       margin: 0;
@@ -71,10 +70,6 @@
       max-height: 100%;
       cursor: pointer;
       border: none;
-      user-drag: none;
-      user-select: none;
-      -webkit-user-drag: none;
-      -webkit-user-select: none;
     }
 
     #overlay {
@@ -93,7 +88,6 @@
     #overlay img {
       max-width: 90vw;
       max-height: 90vh;
-      transition: max-width 0.3s, max-height 0.3s;
     }
 
     #overlay span {
@@ -104,6 +98,13 @@
 
     #overlay.hide-controls span {
       opacity: 0;
+    }
+
+    img {
+      user-drag: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      -webkit-user-select: none;
     }
 
     #closeBtn, #prevBtn, #nextBtn {
@@ -189,7 +190,7 @@
     let currentAlbum = "";
     let currentIndex = 0;
     let currentImages = [];
-    let hoverTimeout;
+    let controlsVisible = true;
 
     closeBtn.onclick = hideOverlay;
     prevBtn.onclick = () => showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
@@ -230,10 +231,7 @@
             const img = document.createElement("img");
             img.src = `Galeri/${album}/${filename}`;
             img.alt = filename;
-            img.onclick = (e) => {
-              e.stopPropagation();
-              showOverlay(idx);
-            };
+            img.onclick = () => showOverlay(idx);
             box.appendChild(img);
             gallery.appendChild(box);
           });
@@ -247,27 +245,28 @@
     function showOverlay(index) {
       overlay.style.display = "flex";
       overlay.classList.add("show-controls");
+      overlay.classList.remove("hide-controls");
+      controlsVisible = true;
       currentIndex = index;
       overlayImage.src = `Galeri/${currentAlbum}/${currentImages[index]}`;
       imageCounter.textContent = `(${index + 1}/${currentImages.length})`;
-      clearTimeout(hoverTimeout); // Kontrolleri hemen göster
-      prevBtn.style.opacity = 1;
-      nextBtn.style.opacity = 1;
-      prevBtn.style.pointerEvents = "auto";
-      nextBtn.style.pointerEvents = "auto";
     }
 
     function hideOverlay() {
       overlay.style.display = "none";
     }
 
-    overlay.addEventListener("click", (e) => {
-      // Overlay dışına tıklanırsa kapanacak
-      if (e.target === overlay) {
-        hideOverlay();
-      }
+    // Toggle kontrol görünürlüğü (tıklama)
+    overlayImage.addEventListener("click", () => {
+      controlsVisible = !controlsVisible;
+      overlay.classList.toggle("show-controls", controlsVisible);
+      overlay.classList.toggle("hide-controls", !controlsVisible);
     });
 
+    // Sağ tıklamayı engelle
+    document.addEventListener("contextmenu", e => e.preventDefault());
+
+    // Klavye ile gezinme
     document.addEventListener("keydown", e => {
       if (overlay.style.display === "flex") {
         if (e.key === "ArrowRight") showOverlay((currentIndex + 1) % currentImages.length);
@@ -276,23 +275,33 @@
       }
     });
 
-    overlay.addEventListener("dblclick", (e) => {
-      e.preventDefault();
-      // Fotoğrafı büyütme/dönüştürme işlevi
-      if (overlayImage.style.maxWidth === "100%") {
-        overlayImage.style.maxWidth = "90vw";
-        overlayImage.style.maxHeight = "90vh";
-      } else {
-        overlayImage.style.maxWidth = "100%";
-        overlayImage.style.maxHeight = "100%";
-      }
-    });
-
-    // Fotoğraf sağ tıklama engellenmesi
-    document.addEventListener("contextmenu", (e) => {
+    // Sürükle bırak engelleme
+    document.addEventListener("dragstart", function(e) {
       if (e.target.tagName === "IMG") {
         e.preventDefault();
       }
+    });
+
+    // Çift tıklama zoom'u engelle
+    overlayImage.addEventListener("dblclick", (e) => {
+      e.preventDefault();
+    });
+
+    // Mobilde çift dokunmayı engelle
+    let lastTouch = 0;
+    overlayImage.addEventListener("touchend", e => {
+      const now = new Date().getTime();
+      if (now - lastTouch <= 300) {
+        e.preventDefault();
+      }
+      lastTouch = now;
+    }, { passive: false });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll("img").forEach(img => {
+        img.addEventListener("contextmenu", e => e.preventDefault());
+        img.addEventListener("touchstart", e => e.preventDefault(), { passive: false });
+      });
     });
   </script>
 </body>
