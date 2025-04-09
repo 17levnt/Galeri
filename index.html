@@ -82,6 +82,7 @@
       justify-content: center;
       flex-direction: column;
       z-index: 1000;
+      touch-action: manipulation;
     }
 
     #overlay img {
@@ -92,6 +93,11 @@
     #overlay span {
       color: #fff;
       margin-top: 10px;
+      transition: opacity 0.3s ease;
+    }
+
+    #overlay.hide-controls span {
+      opacity: 0;
     }
 
     img {
@@ -144,6 +150,16 @@
     #prevBtn:hover,
     #nextBtn:hover {
       background: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 600px) {
+      #prevBtn, #nextBtn {
+        font-size: 24px;
+        padding: 8px 10px;
+        top: auto;
+        bottom: 50%;
+        transform: translateY(50%);
+      }
     }
   </style>
 </head>
@@ -229,6 +245,7 @@
     function showOverlay(index) {
       overlay.style.display = "flex";
       overlay.classList.add("show-controls");
+      overlay.classList.remove("hide-controls");
       controlsVisible = true;
       currentIndex = index;
       overlayImage.src = `Galeri/${currentAlbum}/${currentImages[index]}`;
@@ -239,14 +256,11 @@
       overlay.style.display = "none";
     }
 
-    // Toggle kontrol görünürlüğü
+    // Toggle kontrol görünürlüğü (tıklama)
     overlayImage.addEventListener("click", () => {
       controlsVisible = !controlsVisible;
-      if (controlsVisible) {
-        overlay.classList.add("show-controls");
-      } else {
-        overlay.classList.remove("show-controls");
-      }
+      overlay.classList.toggle("show-controls", controlsVisible);
+      overlay.classList.toggle("hide-controls", !controlsVisible);
     });
 
     // Sağ tıklamayı engelle
@@ -267,6 +281,21 @@
         e.preventDefault();
       }
     });
+
+    // Çift tıklama zoom'u engelle
+    overlayImage.addEventListener("dblclick", (e) => {
+      e.preventDefault();
+    });
+
+    // Mobilde çift dokunmayı engelle
+    let lastTouch = 0;
+    overlayImage.addEventListener("touchend", e => {
+      const now = new Date().getTime();
+      if (now - lastTouch <= 300) {
+        e.preventDefault();
+      }
+      lastTouch = now;
+    }, { passive: false });
 
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll("img").forEach(img => {
