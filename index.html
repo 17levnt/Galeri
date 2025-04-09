@@ -266,6 +266,12 @@
       overlay.classList.toggle("show-controls", controlsVisible);
       overlay.classList.toggle("hide-controls", !controlsVisible);
     });
+    //Dışa tıklandığında kapat
+    overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) {
+    hideOverlay();
+    }
+    });
 
     // Sağ tıklamayı engelle
     document.addEventListener("contextmenu", e => e.preventDefault());
