@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fotoğraf Galerim</title>
-  <link rel="icon" type="image/png" href="favicon.png"/>
   <style>
     body {
       margin: 0;
@@ -89,7 +88,6 @@
     #overlay img {
       max-width: 90vw;
       max-height: 90vh;
-      transition: max-width 0.3s, max-height 0.3s;
     }
 
     #overlay span {
@@ -193,7 +191,6 @@
     let currentIndex = 0;
     let currentImages = [];
     let controlsVisible = true;
-    let hoverTimeout;
 
     closeBtn.onclick = hideOverlay;
     prevBtn.onclick = () => showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
@@ -259,14 +256,17 @@
       overlay.style.display = "none";
     }
 
-    overlay.addEventListener("click", () => {
+    // Toggle kontrol görünürlüğü (tıklama)
+    overlayImage.addEventListener("click", () => {
       controlsVisible = !controlsVisible;
       overlay.classList.toggle("show-controls", controlsVisible);
       overlay.classList.toggle("hide-controls", !controlsVisible);
     });
 
+    // Sağ tıklamayı engelle
     document.addEventListener("contextmenu", e => e.preventDefault());
 
+    // Klavye ile gezinme
     document.addEventListener("keydown", e => {
       if (overlay.style.display === "flex") {
         if (e.key === "ArrowRight") showOverlay((currentIndex + 1) % currentImages.length);
@@ -275,66 +275,33 @@
       }
     });
 
+    // Sürükle bırak engelleme
     document.addEventListener("dragstart", function(e) {
       if (e.target.tagName === "IMG") {
         e.preventDefault();
       }
     });
 
-    overlay.addEventListener("dblclick", (e) => {
+    // Çift tıklama zoom'u engelle
+    overlayImage.addEventListener("dblclick", (e) => {
       e.preventDefault();
-      // Fotoğrafı büyütme/dönüştürme işlevi
-      if (overlayImage.style.maxWidth === "100%") {
-        overlayImage.style.maxWidth = "90vw";
-        overlayImage.style.maxHeight = "90vh";
-      } else {
-        overlayImage.style.maxWidth = "100%";
-        overlayImage.style.maxHeight = "100%";
-      }
     });
 
-    // İmleç fotoğrafın dışına çıktığında kontrolleri göster
-    overlay.addEventListener("mousemove", (e) => {
-      clearTimeout(hoverTimeout);
-      if (e.target === overlayImage) {
-        prevBtn.style.opacity = 0;
-        nextBtn.style.opacity = 0;
-        prevBtn.style.pointerEvents = "none";
-        nextBtn.style.pointerEvents = "none";
-      } else {
-        prevBtn.style.opacity = 1;
-        nextBtn.style.opacity = 1;
-        prevBtn.style.pointerEvents = "auto";
-        nextBtn.style.pointerEvents = "auto";
+    // Mobilde çift dokunmayı engelle
+    let lastTouch = 0;
+    overlayImage.addEventListener("touchend", e => {
+      const now = new Date().getTime();
+      if (now - lastTouch <= 300) {
+        e.preventDefault();
       }
-    });
+      lastTouch = now;
+    }, { passive: false });
 
-    // İmleç hareketi durduktan 2 saniye sonra kontrolleri gizle
-    overlay.addEventListener("mousemove", () => {
-      clearTimeout(hoverTimeout);
-      hoverTimeout = setTimeout(() => {
-        prevBtn.style.opacity = 0;
-        nextBtn.style.opacity = 0;
-        prevBtn.style.pointerEvents = "none";
-        nextBtn.style.pointerEvents = "none";
-      }, 2000);
-    });
-
-    // Sağ ve sol gezinme butonlarının görünürlüğü için
-    overlay.addEventListener("mousemove", (e) => {
-      if (e.clientX < window.innerWidth * 0.25 || e.clientX > window.innerWidth * 0.75) {
-        prevBtn.style.opacity = 1;
-        nextBtn.style.opacity = 1;
-        prevBtn.style.pointerEvents = "auto";
-        nextBtn.style.pointerEvents = "auto";
-
-        setTimeout(() => {
-          prevBtn.style.opacity = 0;
-          nextBtn.style.opacity = 0;
-          prevBtn.style.pointerEvents = "none";
-          nextBtn.style.pointerEvents = "none";
-        }, 1000);
-      }
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll("img").forEach(img => {
+        img.addEventListener("contextmenu", e => e.preventDefault());
+        img.addEventListener("touchstart", e => e.preventDefault(), { passive: false });
+      });
     });
   </script>
 </body>
