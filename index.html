@@ -261,8 +261,11 @@
       overlay.style.display = "none";
     }
 
-    overlay.addEventListener("click", () => {
-      hideOverlay();
+    overlay.addEventListener("click", (e) => {
+      // Overlay dışına tıklanırsa kapanacak
+      if (e.target === overlay) {
+        hideOverlay();
+      }
     });
 
     document.addEventListener("keydown", e => {
