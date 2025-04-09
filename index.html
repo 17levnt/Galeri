@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fotoğraf Galerim</title>
+  <link rel="icon" type="image/png" href="favicon.png"/>
   <style>
     body {
       margin: 0;
@@ -88,6 +89,7 @@
     #overlay img {
       max-width: 90vw;
       max-height: 90vh;
+      transition: max-width 0.3s, max-height 0.3s;
     }
 
     #overlay span {
@@ -190,7 +192,7 @@
     let currentAlbum = "";
     let currentIndex = 0;
     let currentImages = [];
-    let controlsVisible = true;
+    let hoverTimeout;
 
     closeBtn.onclick = hideOverlay;
     prevBtn.onclick = () => showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
@@ -245,28 +247,24 @@
     function showOverlay(index) {
       overlay.style.display = "flex";
       overlay.classList.add("show-controls");
-      overlay.classList.remove("hide-controls");
-      controlsVisible = true;
       currentIndex = index;
       overlayImage.src = `Galeri/${currentAlbum}/${currentImages[index]}`;
       imageCounter.textContent = `(${index + 1}/${currentImages.length})`;
+      clearTimeout(hoverTimeout); // Kontrolleri hemen göster
+      prevBtn.style.opacity = 1;
+      nextBtn.style.opacity = 1;
+      prevBtn.style.pointerEvents = "auto";
+      nextBtn.style.pointerEvents = "auto";
     }
 
     function hideOverlay() {
       overlay.style.display = "none";
     }
 
-    // Toggle kontrol görünürlüğü (tıklama)
-    overlayImage.addEventListener("click", () => {
-      controlsVisible = !controlsVisible;
-      overlay.classList.toggle("show-controls", controlsVisible);
-      overlay.classList.toggle("hide-controls", !controlsVisible);
+    overlay.addEventListener("click", () => {
+      hideOverlay();
     });
 
-    // Sağ tıklamayı engelle
-    document.addEventListener("contextmenu", e => e.preventDefault());
-
-    // Klavye ile gezinme
     document.addEventListener("keydown", e => {
       if (overlay.style.display === "flex") {
         if (e.key === "ArrowRight") showOverlay((currentIndex + 1) % currentImages.length);
@@ -275,33 +273,27 @@
       }
     });
 
-    // Sürükle bırak engelleme
-    document.addEventListener("dragstart", function(e) {
-      if (e.target.tagName === "IMG") {
-        e.preventDefault();
-      }
-    });
-
-    // Çift tıklama zoom'u engelle
-    overlayImage.addEventListener("dblclick", (e) => {
+    overlay.addEventListener("dblclick", (e) => {
       e.preventDefault();
+      // Fotoğrafı büyütme/dönüştürme işlevi
+      if (overlayImage.style.maxWidth === "100%") {
+        overlayImage.style.maxWidth = "90vw";
+        overlayImage.style.maxHeight = "90vh";
+      } else {
+        overlayImage.style.maxWidth = "100%";
+        overlayImage.style.maxHeight = "100%";
+      }
     });
 
-    // Mobilde çift dokunmayı engelle
-    let lastTouch = 0;
-    overlayImage.addEventListener("touchend", e => {
-      const now = new Date().getTime();
-      if (now - lastTouch <= 300) {
-        e.preventDefault();
-      }
-      lastTouch = now;
-    }, { passive: false });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll("img").forEach(img => {
-        img.addEventListener("contextmenu", e => e.preventDefault());
-        img.addEventListener("touchstart", e => e.preventDefault(), { passive: false });
-      });
+    // İmleç fotoğrafın dışına çıktığında kontrolleri göster
+    overlay.addEventListener("mousemove", () => {
+      clearTimeout(hoverTimeout);
+      hoverTimeout = setTimeout(() => {
+        prevBtn.style.opacity = 0;
+        nextBtn.style.opacity = 0;
+        prevBtn.style.pointerEvents = "none";
+        nextBtn.style.pointerEvents = "none";
+      }, 2000);
     });
   </script>
 </body>
