@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Levent | Fotoğraf Galerisi</title>
   <link rel="icon" type="image/png" href="favicon.png"/>
-
   <style>
     body {
       margin: 0;
@@ -15,7 +14,8 @@
       overflow-x: hidden;
     }
 
-    .header {
+    /* --- ÜST MENÜ --- */
+    header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -49,7 +49,8 @@
       border-radius: 1px;
     }
 
-    .album-menu {
+    /* --- ALBÜM MENÜSÜ --- */
+    #albumMenu {
       position: fixed;
       top: 60px;
       right: 16px;
@@ -63,27 +64,22 @@
       transition: opacity 0.3s ease;
     }
 
-    .album-menu.hidden {
+    #albumMenu.hidden {
       display: none;
     }
 
-    .album-menu ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .album-menu li {
+    #albumMenu div {
       padding: 10px 24px;
       cursor: pointer;
       font-weight: 500;
     }
 
-    .album-menu li:hover {
+    #albumMenu div:hover {
       background: rgba(0, 0, 0, 0.05);
     }
 
-    .gallery {
+    /* --- GALERİ --- */
+    #gallery {
       display: grid;
       gap: 8px;
       padding: 8px;
@@ -92,37 +88,107 @@
 
     /* Dikey ekran (9:16) → 2 sütun */
     @media screen and (orientation: portrait) {
-      .gallery {
+      #gallery {
         grid-template-columns: repeat(2, 1fr);
       }
     }
 
     /* Yatay ekran (16:9) → 3 sütun */
     @media screen and (orientation: landscape) {
-      .gallery {
+      #gallery {
         grid-template-columns: repeat(3, 1fr);
       }
     }
 
-    .gallery img {
+    .photo-box {
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+
+    .photo-box img {
       width: 100%;
       height: auto;
       display: block;
-      border-radius: 8px;
       cursor: pointer;
+      user-select: none;
+      -webkit-user-drag: none;
       transition: transform 0.3s ease;
     }
 
-    .gallery img:hover {
+    .photo-box img:hover {
       transform: scale(1.03);
     }
+
+    /* --- OVERLAY (Fotoğraf büyük görünümü) --- */
+    #overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 1000;
+      touch-action: manipulation;
+    }
+
+    #overlay img {
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+
+    #overlay span {
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    #closeBtn, #prevBtn, #nextBtn {
+      position: absolute;
+      color: #fff;
+      font-size: 32px;
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 1001;
+      user-select: none;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    #overlay.show-controls #closeBtn,
+    #overlay.show-controls #prevBtn,
+    #overlay.show-controls #nextBtn {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #closeBtn {
+      top: 10px;
+      right: 20px;
+    }
+
+    #prevBtn {
+      left: 20px;
+      bottom: 20px;
+    }
+
+    #nextBtn {
+      right: 20px;
+      bottom: 20px;
+    }
+
   </style>
 </head>
-
 <body>
 
-  <header class="header">
-    <h1 class="logo">Levent</h1>
+  <header>
+    <div class="logo">Levent</div>
     <div class="menu-icon" id="menuToggle">
       <span></span>
       <span></span>
@@ -130,50 +196,104 @@
     </div>
   </header>
 
-  <nav id="albumMenu" class="album-menu hidden">
-    <ul>
-      <li onclick="openAlbum('Doga')">Doğa</li>
-      <li onclick="openAlbum('Insan')">İnsan</li>
-      <li onclick="openAlbum('Sehir')">Şehir</li>
-      <li onclick="openAlbum('Gece')">Gece</li>
-    </ul>
-  </nav>
+  <div id="albumMenu" class="hidden"></div>
 
-  <main class="gallery"></main>
+  <div id="gallery"></div>
+
+  <div id="overlay">
+    <button id="closeBtn">✕</button>
+    <button id="prevBtn">‹</button>
+    <img id="overlayImage" src="" alt="">
+    <button id="nextBtn">›</button>
+    <span id="imageCounter"></span>
+  </div>
 
   <script>
     const menuToggle = document.getElementById("menuToggle");
     const albumMenu = document.getElementById("albumMenu");
-    const galleryContainer = document.querySelector(".gallery");
+    const gallery = document.getElementById("gallery");
+    const overlay = document.getElementById("overlay");
+    const overlayImage = document.getElementById("overlayImage");
+    const imageCounter = document.getElementById("imageCounter");
+    const closeBtn = document.getElementById("closeBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    let currentAlbum = "";
+    let currentIndex = 0;
+    let currentImages = [];
+    let controlsVisible = true;
 
     menuToggle.addEventListener("click", () => {
       albumMenu.classList.toggle("hidden");
     });
 
-    // Albüm klasörlerinden fotoğraf yükleme
-    function openAlbum(name) {
-      albumMenu.classList.add("hidden");
-      loadGallery(name);
+    closeBtn.onclick = hideOverlay;
+    prevBtn.onclick = () => showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
+    nextBtn.onclick = () => showOverlay((currentIndex + 1) % currentImages.length);
+
+    // Albümleri yükle
+    fetch("Galeri/albums.json")
+      .then(res => res.json())
+      .then(albums => {
+        albums.forEach(album => {
+          const div = document.createElement("div");
+          div.textContent = album;
+          div.onclick = () => {
+            loadAlbum(album);
+            albumMenu.classList.add("hidden");
+          };
+          albumMenu.appendChild(div);
+        });
+        loadAlbum(albums[0]);
+      });
+
+    function loadAlbum(album) {
+      gallery.innerHTML = "Yükleniyor...";
+      fetch(`Galeri/${album}/index.json`)
+        .then(res => res.json())
+        .then(images => {
+          currentAlbum = album;
+          currentImages = images;
+          gallery.innerHTML = "";
+          images.forEach((filename, idx) => {
+            const box = document.createElement("div");
+            box.className = "photo-box";
+            const img = document.createElement("img");
+            img.src = `Galeri/${album}/${filename}`;
+            img.onclick = () => showOverlay(idx);
+            box.appendChild(img);
+            gallery.appendChild(box);
+          });
+        })
+        .catch(() => gallery.innerHTML = "Fotoğraflar yüklenemedi.");
     }
 
-    function loadGallery(albumName) {
-      galleryContainer.innerHTML = "";
+    function showOverlay(index) {
+      overlay.style.display = "flex";
+      overlay.classList.add("show-controls");
+      overlay.classList.remove("hide-controls");
+      controlsVisible = true;
+      currentIndex = index;
+      overlayImage.src = `Galeri/${currentAlbum}/${currentImages[index]}`;
+      imageCounter.textContent = `(${index + 1}/${currentImages.length})`;
+    }
 
-      // Gerçek klasör yapısına göre düzenle
-      const basePath = `Galeri/${albumName}`;
-      const imageCount = 9; // Her albümdeki görsel sayısı
+    function hideOverlay() {
+      overlay.style.display = "none";
+    }
 
-      for (let i = 1; i <= imageCount; i++) {
-        const img = document.createElement("img");
-        img.src = `${basePath}/${i}.jpg`;
-        img.alt = `${albumName} ${i}`;
-        galleryContainer.appendChild(img);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) hideOverlay();
+    });
+
+    document.addEventListener("keydown", e => {
+      if (overlay.style.display === "flex") {
+        if (e.key === "ArrowRight") showOverlay((currentIndex + 1) % currentImages.length);
+        if (e.key === "ArrowLeft") showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
+        if (e.key === "Escape") hideOverlay();
       }
-    }
-
-    // Varsayılan olarak ilk albüm
-    openAlbum("Doga");
+    });
   </script>
-
 </body>
 </html>
