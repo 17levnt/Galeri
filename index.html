@@ -3,91 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fotoğraf Galerim</title>
+  <title>Levent</title>
   <style>
     body {
       margin: 0;
-      font-family: sans-serif;
-      background-color: #555;
-    }
-    body.no-scroll {
-      overflow: hidden;
-      position: fixed;
-      width: 100%;
+      font-family: 'Helvetica Neue', sans-serif;
+      background: #eee;
+      color: #000;
     }
 
-    #menu {
-      position: fixed;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
+    header {
+      background: #ccc;
+      padding: 12px 24px;
       display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 100;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    #menu div {
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 8px 12px;
-      cursor: pointer;
-      text-align: center;
+    header h1 {
+      font-weight: normal;
+      font-size: 24px;
+      margin: 0;
     }
 
-    #menu div:hover {
-      background: #f5f5f5;
+    header .menu-icon {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #000;
     }
 
     #gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      padding: 40px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    @media (max-width: 480px) {
-      #gallery {
-        grid-template-columns: repeat(1, 1fr);
-      }
-    }
-
-    @media (min-width: 1200px) {
-      #gallery {
-        grid-template-columns: repeat(4, 1fr);
-      }
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
+      padding: 10px;
     }
 
     .photo-box {
-      aspect-ratio: 1/1;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #555;
-      padding: 5px;
     }
 
     .photo-box img {
-      max-width: 100%;
-      max-height: 100%;
+      width: 100%;
+      height: auto;
+      display: block;
       cursor: pointer;
-      border: none;
     }
 
     #overlay {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0,0,0,0.9);
       display: none;
       align-items: center;
       justify-content: center;
       flex-direction: column;
       z-index: 1000;
-      touch-action: manipulation;
     }
 
     #overlay img {
@@ -95,80 +67,33 @@
       max-height: 90vh;
     }
 
-    #overlay span {
-      color: #fff;
-      margin-top: 10px;
-      transition: opacity 0.3s ease;
-    }
-
-    #overlay.hide-controls span {
-      opacity: 0;
-    }
-
-    img {
-      user-drag: none;
-      user-select: none;
-      -webkit-user-drag: none;
-      -webkit-user-select: none;
-    }
-
     #closeBtn, #prevBtn, #nextBtn {
       position: absolute;
       color: #fff;
       font-size: 32px;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0,0,0,0.3);
       border: none;
-      padding: 10px 14px;
       cursor: pointer;
-      z-index: 1001;
-      user-select: none;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
+      padding: 8px 12px;
+      transition: 0.3s;
     }
 
-    #overlay.show-controls #closeBtn,
-    #overlay.show-controls #prevBtn,
-    #overlay.show-controls #nextBtn {
-      opacity: 1;
-      pointer-events: auto;
+    #closeBtn { top: 20px; right: 30px; }
+    #prevBtn { left: 30px; top: 50%; transform: translateY(-50%); }
+    #nextBtn { right: 30px; top: 50%; transform: translateY(-50%); }
+
+    #closeBtn:hover, #prevBtn:hover, #nextBtn:hover {
+      background: rgba(255,255,255,0.2);
     }
 
-    #closeBtn {
-      top: 10px;
-      right: 20px;
-    }
-
-    #prevBtn {
-      left: 20px;
-      bottom: 20px;
-    }
-
-    #nextBtn {
-      right: 20px;
-      bottom: 20px;
-    }
-
-    #closeBtn:hover,
-    #prevBtn:hover,
-    #nextBtn:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    @media (max-width: 600px) {
-      #prevBtn, #nextBtn {
-        font-size: 24px;
-        padding: 8px 10px;
-        top: auto;
-        bottom: 50%;
-        transform: translateY(50%);
-      }
-    }
   </style>
 </head>
 <body>
 
-  <div id="menu"></div>
+  <header>
+    <h1>Levent</h1>
+    <div class="menu-icon"></div>
+  </header>
 
   <div id="gallery"></div>
 
@@ -177,156 +102,66 @@
     <button id="prevBtn">‹</button>
     <img id="overlayImage" src="" alt="">
     <button id="nextBtn">›</button>
-    <span id="imageCounter"></span>
   </div>
 
   <script>
-    const menu = document.getElementById("menu");
-    const gallery = document.getElementById("gallery");
-    const overlay = document.getElementById("overlay");
-    const overlayImage = document.getElementById("overlayImage");
-    const imageCounter = document.getElementById("imageCounter");
-    const closeBtn = document.getElementById("closeBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
+    const gallery = document.getElementById('gallery');
+    const overlay = document.getElementById('overlay');
+    const overlayImage = document.getElementById('overlayImage');
+    const closeBtn = document.getElementById('closeBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
 
-    let currentAlbum = "";
-    let currentIndex = 0;
     let currentImages = [];
-    let controlsVisible = true;
+    let currentIndex = 0;
+
+    fetch('Galeri/albums.json')
+      .then(res => res.json())
+      .then(albums => {
+        const album = albums[0];
+        loadAlbum(album);
+      });
+
+    function loadAlbum(album) {
+      fetch(`Galeri/${album}/index.json`)
+        .then(res => res.json())
+        .then(images => {
+          currentImages = images;
+          gallery.innerHTML = '';
+          images.forEach((filename, idx) => {
+            const box = document.createElement('div');
+            box.className = 'photo-box';
+            const img = document.createElement('img');
+            img.src = `Galeri/${album}/${filename}`;
+            img.onclick = () => showOverlay(idx);
+            box.appendChild(img);
+            gallery.appendChild(box);
+          });
+        });
+    }
+
+    function showOverlay(index) {
+      overlay.style.display = 'flex';
+      currentIndex = index;
+      overlayImage.src = `Galeri/${currentImages[index]}`;
+    }
+
+    function hideOverlay() {
+      overlay.style.display = 'none';
+    }
 
     closeBtn.onclick = hideOverlay;
     prevBtn.onclick = () => showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
     nextBtn.onclick = () => showOverlay((currentIndex + 1) % currentImages.length);
 
-    fetch("Galeri/albums.json")
-      .then(res => {
-        if (!res.ok) throw new Error("Albüm listesi yüklenemedi");
-        return res.json();
-      })
-      .then(albums => {
-        albums.forEach(album => {
-          const div = document.createElement("div");
-          div.textContent = album;
-          div.onclick = () => loadAlbum(album);
-          menu.appendChild(div);
-        });
-      })
-      .catch(err => {
-        console.error("Albüm listesi yüklenemedi", err);
-        menu.innerHTML = "Albüm listesi yüklenemedi.";
-      });
-
-    function loadAlbum(album) {
-      gallery.innerHTML = "Yükleniyor...";
-      fetch(`Galeri/${album}/index.json`)
-        .then(res => {
-          if (!res.ok) throw new Error("Fotoğraflar yüklenemedi");
-          return res.json();
-        })
-        .then(images => {
-          currentAlbum = album;
-          currentImages = images;
-          gallery.innerHTML = "";
-          images.forEach((filename, idx) => {
-            const box = document.createElement("div");
-            box.className = "photo-box";
-            const img = document.createElement("img");
-            img.src = `Galeri/${album}/${filename}`;
-            img.alt = filename;
-            img.onclick = () => showOverlay(idx);
-            box.appendChild(img);
-            gallery.appendChild(box);
-          });
-        })
-        .catch(err => {
-          console.error("Albüm yüklenemedi", err);
-          gallery.innerHTML = "Fotoğraflar yüklenemedi.";
-        });
-    }
-
-   //function preventScroll(e) {
-         // e.preventDefault();
-  //  }
-
-
-    function showOverlay(index) {
-      overlay.style.display = "flex";
-      overlay.classList.add("show-controls");
-      overlay.classList.remove("hide-controls");
-      //document.body.classList.add("no-scroll");
-     // document.body.addEventListener("touchmove", preventScroll, { passive: false });
-      controlsVisible = true;
-      currentIndex = index;
-      overlayImage.src = `Galeri/${currentAlbum}/${currentImages[index]}`;
-      imageCounter.textContent = `(${index + 1}/${currentImages.length})`;
-    }
-
-    function hideOverlay() {
-      overlay.style.display = "none";
-      //document.body.classList.remove("no-scroll");
-      //document.body.removeEventListener("touchmove", preventScroll);
-    }
-
-    // Toggle kontrol görünürlüğü (tıklama)
-    overlayImage.addEventListener("click", () => {
-      controlsVisible = !controlsVisible;
-      overlay.classList.toggle("show-controls", controlsVisible);
-      overlay.classList.toggle("hide-controls", !controlsVisible);
-    });
-    // Toggle kontrol görünürlüğü (dokunma)
-    overlayImage.addEventListener("touchend", (e) => {
-      e.stopPropagation();
-      overlay.classList.toggle("show-controls", controlsVisible);
-      overlay.classList.toggle("hide-controls", !controlsVisible);
-    });
-    //Dışa tıklandığında kapat
-    overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) {
-    hideOverlay();
-    }
-    });
-
-    // Sağ tıklamayı engelle
-    document.addEventListener("contextmenu", e => e.preventDefault());
-
-    // Klavye ile gezinme
-    document.addEventListener("keydown", e => {
-      if (overlay.style.display === "flex") {
-        if (e.key === "ArrowRight") showOverlay((currentIndex + 1) % currentImages.length);
-        if (e.key === "ArrowLeft") showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
-        if (e.key === "Escape") hideOverlay();
+    document.addEventListener('keydown', e => {
+      if (overlay.style.display === 'flex') {
+        if (e.key === 'ArrowRight') nextBtn.click();
+        if (e.key === 'ArrowLeft') prevBtn.click();
+        if (e.key === 'Escape') hideOverlay();
       }
-    });
-
-    // Sürükle bırak engelleme
-    document.addEventListener("dragstart", function(e) {
-      if (e.target.tagName === "IMG") {
-        e.preventDefault();
-      }
-    });
-
-    // Çift tıklama zoom'u engelle
-    overlayImage.addEventListener("dblclick", (e) => {
-      e.preventDefault();
-    });
-
-     //Mobilde çift dokunmayı engelle
-    //let lastTouch = 0;
-    //overlayImage.addEventListener("touchend", e => {
-      //const now = new Date().getTime();
-      //if (now - lastTouch <= 300) {
-        //e.preventDefault();
-      //}
-      //lastTouch = now;
-    //}, { passive: false });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll("img").forEach(img => {
-        img.addEventListener("contextmenu", e => e.preventDefault());
-        //img.addEventListener("touchstart", e => e.preventDefault(), { passive: false });
-      });
     });
   </script>
+
 </body>
 </html>
