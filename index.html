@@ -3,164 +3,176 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Levent</title>
+  <title>Levent | Fotoğraf Galerisi</title>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
   <style>
     body {
       margin: 0;
-      font-family: 'Helvetica Neue', sans-serif;
-      background: #eee;
+      background: #fff;
+      font-family: "Inter", sans-serif;
       color: #000;
+      overflow-x: hidden;
     }
 
-    header {
-      background: #ccc;
-      padding: 12px 24px;
+    .header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      border-bottom: 1px solid #ddd;
+      background: rgba(255, 255, 255, 0.95);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
-    header h1 {
-      font-weight: normal;
-      font-size: 24px;
-      margin: 0;
+    .logo {
+      font-size: 20px;
+      font-weight: 600;
     }
 
-    header .menu-icon {
+    .menu-icon {
       width: 24px;
-      height: 24px;
-      border: 2px solid #000;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 16px;
     }
 
-    #gallery {
+    .menu-icon span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background-color: #000;
+      border-radius: 1px;
+    }
+
+    .album-menu {
+      position: fixed;
+      top: 60px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 12px;
+      padding: 12px 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      transition: opacity 0.3s ease;
+    }
+
+    .album-menu.hidden {
+      display: none;
+    }
+
+    .album-menu ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .album-menu li {
+      padding: 10px 24px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .album-menu li:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 10px;
-      padding: 10px;
+      gap: 8px;
+      padding: 8px;
+      transition: all 0.3s ease;
     }
 
-    .photo-box {
-      overflow: hidden;
+    /* Dikey ekran (9:16) → 2 sütun */
+    @media screen and (orientation: portrait) {
+      .gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
-    .photo-box img {
+    /* Yatay ekran (16:9) → 3 sütun */
+    @media screen and (orientation: landscape) {
+      .gallery {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .gallery img {
       width: 100%;
       height: auto;
       display: block;
+      border-radius: 8px;
       cursor: pointer;
+      transition: transform 0.3s ease;
     }
 
-    #overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      z-index: 1000;
+    .gallery img:hover {
+      transform: scale(1.03);
     }
-
-    #overlay img {
-      max-width: 90vw;
-      max-height: 90vh;
-    }
-
-    #closeBtn, #prevBtn, #nextBtn {
-      position: absolute;
-      color: #fff;
-      font-size: 32px;
-      background: rgba(0,0,0,0.3);
-      border: none;
-      cursor: pointer;
-      padding: 8px 12px;
-      transition: 0.3s;
-    }
-
-    #closeBtn { top: 20px; right: 30px; }
-    #prevBtn { left: 30px; top: 50%; transform: translateY(-50%); }
-    #nextBtn { right: 30px; top: 50%; transform: translateY(-50%); }
-
-    #closeBtn:hover, #prevBtn:hover, #nextBtn:hover {
-      background: rgba(255,255,255,0.2);
-    }
-
   </style>
 </head>
+
 <body>
 
-  <header>
-    <h1>Levent</h1>
-    <div class="menu-icon"></div>
+  <header class="header">
+    <h1 class="logo">Levent</h1>
+    <div class="menu-icon" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
   </header>
 
-  <div id="gallery"></div>
+  <nav id="albumMenu" class="album-menu hidden">
+    <ul>
+      <li onclick="openAlbum('Doga')">Doğa</li>
+      <li onclick="openAlbum('Insan')">İnsan</li>
+      <li onclick="openAlbum('Sehir')">Şehir</li>
+      <li onclick="openAlbum('Gece')">Gece</li>
+    </ul>
+  </nav>
 
-  <div id="overlay">
-    <button id="closeBtn">✕</button>
-    <button id="prevBtn">‹</button>
-    <img id="overlayImage" src="" alt="">
-    <button id="nextBtn">›</button>
-  </div>
+  <main class="gallery"></main>
 
   <script>
-    const gallery = document.getElementById('gallery');
-    const overlay = document.getElementById('overlay');
-    const overlayImage = document.getElementById('overlayImage');
-    const closeBtn = document.getElementById('closeBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
+    const menuToggle = document.getElementById("menuToggle");
+    const albumMenu = document.getElementById("albumMenu");
+    const galleryContainer = document.querySelector(".gallery");
 
-    let currentImages = [];
-    let currentIndex = 0;
-
-    fetch('Galeri/albums.json')
-      .then(res => res.json())
-      .then(albums => {
-        const album = albums[0];
-        loadAlbum(album);
-      });
-
-    function loadAlbum(album) {
-      fetch(`Galeri/${album}/index.json`)
-        .then(res => res.json())
-        .then(images => {
-          currentImages = images;
-          gallery.innerHTML = '';
-          images.forEach((filename, idx) => {
-            const box = document.createElement('div');
-            box.className = 'photo-box';
-            const img = document.createElement('img');
-            img.src = `Galeri/${album}/${filename}`;
-            img.onclick = () => showOverlay(idx);
-            box.appendChild(img);
-            gallery.appendChild(box);
-          });
-        });
-    }
-
-    function showOverlay(index) {
-      overlay.style.display = 'flex';
-      currentIndex = index;
-      overlayImage.src = `Galeri/${currentImages[index]}`;
-    }
-
-    function hideOverlay() {
-      overlay.style.display = 'none';
-    }
-
-    closeBtn.onclick = hideOverlay;
-    prevBtn.onclick = () => showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
-    nextBtn.onclick = () => showOverlay((currentIndex + 1) % currentImages.length);
-
-    document.addEventListener('keydown', e => {
-      if (overlay.style.display === 'flex') {
-        if (e.key === 'ArrowRight') nextBtn.click();
-        if (e.key === 'ArrowLeft') prevBtn.click();
-        if (e.key === 'Escape') hideOverlay();
-      }
+    menuToggle.addEventListener("click", () => {
+      albumMenu.classList.toggle("hidden");
     });
+
+    // Albüm klasörlerinden fotoğraf yükleme
+    function openAlbum(name) {
+      albumMenu.classList.add("hidden");
+      loadGallery(name);
+    }
+
+    function loadGallery(albumName) {
+      galleryContainer.innerHTML = "";
+
+      // Gerçek klasör yapısına göre düzenle
+      const basePath = `Galeri/${albumName}`;
+      const imageCount = 9; // Her albümdeki görsel sayısı
+
+      for (let i = 1; i <= imageCount; i++) {
+        const img = document.createElement("img");
+        img.src = `${basePath}/${i}.jpg`;
+        img.alt = `${albumName} ${i}`;
+        galleryContainer.appendChild(img);
+      }
+    }
+
+    // Varsayılan olarak ilk albüm
+    openAlbum("Doga");
   </script>
 
 </body>
