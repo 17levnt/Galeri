@@ -60,21 +60,23 @@
     }
 
     .gallery {
-      column-count: 3;
-      column-gap: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px; /* Fotoğraflar arasındaki eşit boşluk */
+      padding: 6px;
     }
 
     .gallery img {
       width: 100%;
+      height: auto;
       display: block;
-      margin: 0;
-      padding: 0;
+      object-fit: cover;
     }
 
-    /* Dikey ekranlar için 2 sütuna düşür */
+    /* Dikey ekranlar için 2 sütun */
     @media (max-aspect-ratio: 9/10) {
       .gallery {
-        column-count: 2;
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
@@ -96,12 +98,29 @@
   </div>
 
   <main class="gallery">
+    <!-- Albüm 1 fotoğrafları -->
     <img src="albums/album1/photo1.jpg" alt="">
     <img src="albums/album1/photo2.jpg" alt="">
     <img src="albums/album1/photo3.jpg" alt="">
     <img src="albums/album1/photo4.jpg" alt="">
     <img src="albums/album1/photo5.jpg" alt="">
     <img src="albums/album1/photo6.jpg" alt="">
+
+    <!-- Albüm 2 fotoğrafları -->
+    <img src="albums/album2/photo1.jpg" alt="">
+    <img src="albums/album2/photo2.jpg" alt="">
+    <img src="albums/album2/photo3.jpg" alt="">
+    <img src="albums/album2/photo4.jpg" alt="">
+    <img src="albums/album2/photo5.jpg" alt="">
+    <img src="albums/album2/photo6.jpg" alt="">
+
+    <!-- Albüm 3 fotoğrafları -->
+    <img src="albums/album3/photo1.jpg" alt="">
+    <img src="albums/album3/photo2.jpg" alt="">
+    <img src="albums/album3/photo3.jpg" alt="">
+    <img src="albums/album3/photo4.jpg" alt="">
+    <img src="albums/album3/photo5.jpg" alt="">
+    <img src="albums/album3/photo6.jpg" alt="">
   </main>
 
   <script>
