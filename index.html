@@ -78,26 +78,35 @@
       background: rgba(0, 0, 0, 0.05);
     }
 
-    /* --- GALERİ --- */
-    #gallery {
-      display: grid;
-      gap: 8px;
-      padding: 8px;
-      transition: all 0.3s ease;
-    }
+    /* --- GALERİ (Masonry düzeni) --- */
+#gallery {
+  column-gap: 8px; /* sütunlar arası eşit boşluk */
+  padding: 8px;
+}
 
-    /* Dikey ekran (9:16) → 2 sütun */
-    @media screen and (orientation: portrait) {
-      #gallery {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
+/* Dikey ekran (9:16) → 2 sütun */
+@media screen and (orientation: portrait) {
+  #gallery {
+    column-count: 2;
+  }
+}
 
-    /* Yatay ekran (16:9) → 3 sütun */
-    @media screen and (orientation: landscape) {
-      #gallery {
-        grid-template-columns: repeat(3, 1fr);
-      }
+/* Yatay ekran (16:9) → 3 sütun */
+@media screen and (orientation: landscape) {
+  #gallery {
+    column-count: 3;
+  }
+}
+
+/* Fotoğraf kutuları sütun akışına göre hizalanacak */
+.photo-box {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 8px; /* alt boşluk — sütunlar arası akış */
+  background: #000;
+  overflow: hidden;
+  border-radius: 4px;
+}
     }
 
     .photo-box {
@@ -108,15 +117,16 @@
       background: #000;
     }
 
-    .photo-box img {
-      width: 100%;
-      height: auto;
-      display: block;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-drag: none;
-      transition: transform 0.3s ease;
-    }
+ .photo-box img {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: transform 0.3s ease;
+  object-fit: cover;
+}
 
     .photo-box img:hover {
       transform: scale(1.03);
@@ -297,4 +307,5 @@
   </script>
 </body>
 </html>
+
 
