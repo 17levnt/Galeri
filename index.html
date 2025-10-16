@@ -157,44 +157,40 @@
     }
 
 
-
-    /* --- GALERİ (Masonry düzeni) --- */
-
+/* --- GALERİ (Kare Izgara ve Sütun Kontrolü) --- */
 #gallery {
   display: grid;
-  /* Ekran genişliğine göre sütun sayısını dinamik olarak ayarla (örneğin min 150px kareler) */
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 8px; /* Öğeler arası boşluk */
+  gap: 8px; /* Öğeler arası eşit boşluk */
   padding: 58px;
 }
 
-
-/* --- Yönlendirme (Portrait/Landscape) için grid ayarlarını koruyabiliriz --- */
+/* Dikey ekran (9:16) → 2 sütun */
 @media screen and (orientation: portrait) {
   #gallery {
-    grid-template-columns: repeat(auto-fill, minmax(40vw, 1fr)); /* Dikeyde daha az, büyük kare */
+    grid-template-columns: repeat(2, 1fr); /* Tam 2 sütun */
   }
 }
+
+/* Yatay ekran (16:9) → 3 sütun */
 @media screen and (orientation: landscape) {
   #gallery {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Yatayda daha çok, küçük kare */
+    grid-template-columns: repeat(3, 1fr); /* Tam 3 sütun */
   }
 }
 
 /* Fotoğraf kutularının kare olmasını sağla */
 .photo-box {
-  background: #000;
+  background: #000; /* Boş kalan kısımlar siyah olacak */
   overflow: hidden;
   border-radius: 4px;
-
+  
   /* Kare yapmanın anahtarı: */
-  width: 100%; /* Sütun genişliğini kapla */
+  width: 100%; 
   padding-top: 100%; /* Yüksekliği genişliğe eşitle (1:1 en boy oranı) */
-  position: relative; /* İçindeki img'yi konumlandırmak için */
+  position: relative; 
 }
 
-
-
+/* 'photo-box img' kuralını sığdırma (contain) olarak güncelliyoruz */
 .photo-box img {
   /* img'yi kapsayıcının (photo-box'ın) içine sığdır */
   position: absolute;
@@ -203,8 +199,8 @@
   width: 100%;
   height: 100%;
   
-  /* Görseli kareye sığdırmak için: */
-  object-fit: cover; /* Resmi en boy oranını bozmadan kapsayıcıyı doldurur */
+  /* Görseli kutuya sığdırmak için: */
+  object-fit: contain; /* EN BOY ORANINI koruyarak kutuya sığdırır */
   object-position: center; /* Resmi ortalar */
 
   display: block;
@@ -213,7 +209,6 @@
   -webkit-user-drag: none;
   transition: transform 0.3s ease;
 }
-
 
 
     .photo-box img:hover {
@@ -573,4 +568,5 @@
 </body>
 
 </html>
+
 
