@@ -78,47 +78,48 @@
       background: rgba(0, 0, 0, 0.05);
     }
 
-    /* --- GALERİ (duvar görünümü) --- */
+    /* --- GALERİ (Grid düzeni) --- */
+  #gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(0, 1fr));
+    gap: 8px;
+    padding: 8px;
+  }
+
+  /* Dikey ekran (9:16) → 2 sütun */
+  @media screen and (orientation: portrait) {
     #gallery {
-      column-gap: 8px;
-      padding: 8px;
+      grid-template-columns: repeat(2, 1fr);
     }
+  }
 
-    @media screen and (orientation: portrait) {
-      #gallery {
-        column-count: 2;
-      }
+  /* Yatay ekran (16:9) → 3 sütun */
+  @media screen and (orientation: landscape) {
+    #gallery {
+      grid-template-columns: repeat(3, 1fr);
     }
+  }
 
-    @media screen and (orientation: landscape) {
-      #gallery {
-        column-count: 3;
-      }
-    }
+  .photo-box {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 4px;
+    background: #000;
+  }
 
-    .photo-box {
-      display: inline-block;
-      width: 100%;
-      margin-bottom: 8px;
-      background: #000;
-      overflow: hidden;
-      border-radius: 4px;
-    }
+  .photo-box img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
 
-    .photo-box img {
-      width: 100%;
-      height: auto;
-      display: block;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-drag: none;
-      transition: transform 0.3s ease;
-      object-fit: cover;
-    }
-
-    .photo-box img:hover {
-      transform: scale(1.03);
-    }
+  .photo-box img:hover {
+    transform: scale(1.03);
+  }
 
     /* --- OVERLAY --- */
     #overlay {
@@ -296,3 +297,4 @@
   </script>
 </body>
 </html>
+
