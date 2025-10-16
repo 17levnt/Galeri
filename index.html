@@ -78,11 +78,9 @@
       background: rgba(0, 0, 0, 0.05);
     }
 
-/* --- GALERİ (Kare Izgara Düzeni) --- */
+/* --- GALERİ (Kare Izgara ve Sütun Kontrolü) --- */
 #gallery {
   display: grid;
-  /* Ekran genişliğine göre sütun sayısını dinamik olarak ayarla */
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 8px; /* Öğeler arası eşit boşluk */
   padding: 58px;
 }
@@ -90,38 +88,30 @@
 /* Dikey ekran (9:16) → 2 sütun */
 @media screen and (orientation: portrait) {
   #gallery {
-    column-count: 2;
+    grid-template-columns: repeat(2, 1fr); /* Tam 2 sütun */
   }
 }
 
-/* Dikey ekran (9:16) → Daha az, büyük kare */
-@media screen and (orientation: portrait) {
+/* Yatay ekran (16:9) → 3 sütun */
+@media screen and (orientation: landscape) {
   #gallery {
-    grid-template-columns: repeat(auto-fill, minmax(40vw, 1fr));
+    grid-template-columns: repeat(3, 1fr); /* Tam 3 sütun */
   }
 }
 
-/* Fotoğraf kutularının kare olmasını sağla */
 /* Fotoğraf kutularının kare olmasını sağla */
 .photo-box {
-  background: #000;
+  background: #000; /* Boş kalan kısımlar siyah olacak */
   overflow: hidden;
   border-radius: 4px;
   
   /* Kare yapmanın anahtarı: */
   width: 100%; 
   padding-top: 100%; /* Yüksekliği genişliğe eşitle (1:1 en boy oranı) */
-  position: relative; /* İçindeki img'yi konumlandırmak için */
-
-  /* Not: Bu kısmı siliyoruz çünkü yukarıdaki padding-top ile kare yapısını sağlıyoruz. 
-     Ayrıca inline-block ve width: 100% de artık gerekmiyor. */
-  /* display: inline-block;
-  width: 100%;
-  margin-bottom: 8px; */ 
-  
+  position: relative; 
 }
- 
-/* 'photo-box img' kuralını da kare kutuya sığacak şekilde güncelliyoruz */
+
+/* 'photo-box img' kuralını sığdırma (contain) olarak güncelliyoruz */
 .photo-box img {
   /* img'yi kapsayıcının (photo-box'ın) içine sığdır */
   position: absolute;
@@ -130,8 +120,8 @@
   width: 100%;
   height: 100%;
   
-  /* Görseli kareye sığdırmak için: */
-  object-fit: cover; /* Resmi en boy oranını bozmadan kapsayıcıyı doldurur */
+  /* Görseli kutuya sığdırmak için: */
+  object-fit: contain; /* EN BOY ORANINI koruyarak kutuya sığdırır */
   object-position: center; /* Resmi ortalar */
 
   display: block;
@@ -139,7 +129,6 @@
   user-select: none;
   -webkit-user-drag: none;
   transition: transform 0.3s ease;
-  /* object-fit: cover; mevcut kuralda var, ancak tam kare sığdırma için burada tutmak kritik. */
 }
 
     .photo-box img:hover {
@@ -321,6 +310,7 @@
   </script>
 </body>
 </html>
+
 
 
 
