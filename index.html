@@ -82,13 +82,13 @@
 #gallery {
   display: grid;
   gap: 8px; /* Öğeler arası eşit boşluk */
-  padding: 58px;
 }
 
 /* Dikey ekran (9:16) → 2 sütun */
 @media screen and (orientation: portrait) {
   #gallery {
     grid-template-columns: repeat(2, 1fr); /* Tam 2 sütun */
+    padding: 30px;
   }
 }
 
@@ -96,12 +96,13 @@
 @media screen and (orientation: landscape) {
   #gallery {
     grid-template-columns: repeat(3, 1fr); /* Tam 3 sütun */
+    padding: 60px;
   }
 }
 
 /* Fotoğraf kutularının kare olmasını sağla */
 .photo-box {
-  background: #fff; /* Boş kalan kısımlar siyah olacak */
+  background: #000; /* Boş kalan kısımlar siyah olacak */
   overflow: hidden;
   border-radius: 0px;
   
@@ -117,8 +118,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
   
   /* Görseli kutuya sığdırmak için: */
   object-fit: contain; /* EN BOY ORANINI koruyarak kutuya sığdırır */
@@ -140,7 +141,7 @@
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.96);
       display: none;
       align-items: center;
       justify-content: center;
@@ -182,7 +183,7 @@
     }
 
     #closeBtn {
-      top: 10px;
+      top: 13px;
       right: 20px;
     }
 
@@ -371,6 +372,7 @@
   </script>
 </body>
 </html>
+
 
 
 
