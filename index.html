@@ -1,82 +1,82 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Levent | Fotoğraf Galerisi</title>
-  <link rel="icon" type="image/png" href="favicon.png"/>
-  <style>
-    body {
-      margin: 0;
-      background: #fff;
-      font-family: "Inter", sans-serif;
-      color: #000;
-      overflow-x: hidden;
-    }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Levent | Fotoğraf Galerisi</title>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: "Inter", sans-serif;
+      color: #000;
+      overflow-x: hidden;
+    }
 
-    /* --- ÜST MENÜ --- */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 24px;
-      border-bottom: 1px solid #ddd;
-      background: rgba(255, 255, 255, 0.95);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+    /* --- ÜST MENÜ --- */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      border-bottom: 1px solid #ddd;
+      background: rgba(255, 255, 255, 0.95);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
-    .logo {
-      font-size: 20px;
-      font-weight: 600;
-    }
+    .logo {
+      font-size: 20px;
+      font-weight: 600;
+    }
 
-    .menu-icon {
-      width: 24px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 16px;
-    }
+    .menu-icon {
+      width: 24px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 16px;
+    }
 
-    .menu-icon span {
-      display: block;
-      height: 2px;
-      width: 100%;
-      background-color: #000;
-      border-radius: 1px;
-    }
+    .menu-icon span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background-color: #000;
+      border-radius: 1px;
+    }
 
-    /* --- ALBÜM MENÜSÜ --- */
-    #albumMenu {
-      position: fixed;
-      top: 60px;
-      right: 16px;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(0, 0, 0, 0.15);
-      border-radius: 0px;
-      padding: 12px 0;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      z-index: 100;
-      backdrop-filter: blur(8px);
-      transition: opacity 0.3s ease;
-    }
+    /* --- ALBÜM MENÜSÜ --- */
+    #albumMenu {
+      position: fixed;
+      top: 60px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 12px;
+      padding: 12px 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      backdrop-filter: blur(8px);
+      transition: opacity 0.3s ease;
+    }
 
-    #albumMenu.hidden {
-      display: none;
-    }
+    #albumMenu.hidden {
+      display: none;
+    }
 
-    #albumMenu div {
-      padding: 10px 24px;
-      cursor: pointer;
-      font-weight: 500;
-    }
+    #albumMenu div {
+      padding: 10px 24px;
+      cursor: pointer;
+      font-weight: 500;
+    }
 
-    #albumMenu div:hover {
-      background: rgba(0, 0, 0, 0.05);
-    }
+    #albumMenu div:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
 
 /* --- GALERİ (Kare Izgara ve Sütun Kontrolü) --- */
 #gallery {
@@ -153,74 +153,82 @@
       max-height: 90vh;
     }
 
-    #overlay span {
-      color: #fff;
-      margin-top: 10px;
+    #overlay span {
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    #closeBtn, #prevBtn, #nextBtn {
+      position: absolute;
+      color: #fff;
+      font-size: 32px;
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 1001;
+      user-select: none;
+      opacity: 0; /* Başlangıçta gizli */
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Tıklama ile gösterilen kontroller */
+    #overlay.show-controls #closeBtn,
+    #overlay.show-controls #prevBtn,
+    #overlay.show-controls #nextBtn,
+    #overlay.show-controls #imageCounter { /* Sayaç da kontrollerle birlikte gizlensin/görünsün */
+      opacity: 1;
+      pointer-events: auto;
+    }
+    /* Sayaç için ek CSS */
+    #imageCounter {
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
 
-    #closeBtn, #prevBtn, #nextBtn {
-      position: absolute;
-      color: #fff;
-      font-size: 32px;
-      background: rgba(0, 0, 0, 0.5);
-      border: none;
-      padding: 10px 14px;
-      cursor: pointer;
-      z-index: 1001;
-      user-select: none;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
 
-    #overlay.show-controls #closeBtn,
-    #overlay.show-controls #prevBtn,
-    #overlay.show-controls #nextBtn {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    #closeBtn {
+      top: 10px;
+      right: 20px;
+    }
 
-    #closeBtn {
-      top: 13px;
-      right: 20px;
-    }
+    #prevBtn {
+      left: 20px;
+      bottom: 20px;
+    }
 
-    #prevBtn {
-      left: 20px;
-      bottom: 20px;
-    }
+    #nextBtn {
+      right: 20px;
+      bottom: 20px;
+    }
 
-    #nextBtn {
-      right: 20px;
-      bottom: 20px;
-    }
-
-  </style>
+  </style>
 </head>
 <body>
 
-  <header>
-    <div class="logo">Levent</div>
-    <div class="menu-icon" id="menuToggle">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-  </header>
+  <header>
+    <div class="logo">Levent</div>
+    <div class="menu-icon" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </header>
 
-  <div id="albumMenu" class="hidden"></div>
+  <div id="albumMenu" class="hidden"></div>
 
-  <div id="gallery"></div>
+  <div id="gallery"></div>
 
-  <div id="overlay">
-    <button id="closeBtn">✕</button>
-    <button id="prevBtn">‹</button>
-    <img id="overlayImage" src="" alt="">
-    <button id="nextBtn">›</button>
-    <span id="imageCounter"></span>
-  </div>
+  <div id="overlay">
+    <button id="closeBtn">✕</button>
+    <button id="prevBtn">‹</button>
+    <img id="overlayImage" src="" alt="">
+    <button id="nextBtn">›</button>
+    <span id="imageCounter"></span>
+  </div>
 
-  <script>
+  <script>
     const menuToggle = document.getElementById("menuToggle");
     const albumMenu = document.getElementById("albumMenu");
     const gallery = document.getElementById("gallery");
@@ -370,16 +378,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
