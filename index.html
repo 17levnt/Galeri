@@ -78,50 +78,61 @@
       background: rgba(0, 0, 0, 0.05);
     }
 
-    /* --- GALERİ (Grid düzeni) --- */
+    /* --- GALERİ (Masonry düzeni) --- */
+#gallery {
+  column-gap: 8px; /* sütunlar arası eşit boşluk */
+  padding: 8px;
+}
+
+/* Dikey ekran (9:16) → 2 sütun */
+@media screen and (orientation: portrait) {
   #gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(0, 1fr));
-    gap: 8px;
-    padding: 8px;
+    column-count: 2;
   }
+}
 
-  /* Dikey ekran (9:16) → 2 sütun */
-  @media screen and (orientation: portrait) {
-    #gallery {
-      grid-template-columns: repeat(2, 1fr);
+/* Yatay ekran (16:9) → 3 sütun */
+@media screen and (orientation: landscape) {
+  #gallery {
+    column-count: 3;
+  }
+}
+
+/* Fotoğraf kutuları sütun akışına göre hizalanacak */
+.photo-box {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 8px; /* alt boşluk — sütunlar arası akış */
+  background: #000;
+  overflow: hidden;
+  border-radius: 4px;
+}
     }
-  }
 
-  /* Yatay ekran (16:9) → 3 sütun */
-  @media screen and (orientation: landscape) {
-    #gallery {
-      grid-template-columns: repeat(3, 1fr);
+    .photo-box {
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
     }
-  }
 
-  .photo-box {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    border-radius: 4px;
-    background: #000;
-  }
+ .photo-box img {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: transform 0.3s ease;
+  object-fit: cover;
+}
 
-  .photo-box img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-  }
+    .photo-box img:hover {
+      transform: scale(1.03);
+    }
 
-  .photo-box img:hover {
-    transform: scale(1.03);
-  }
-
-    /* --- OVERLAY --- */
+    /* --- OVERLAY (Fotoğraf büyük görünümü) --- */
     #overlay {
       position: fixed;
       top: 0; left: 0;
@@ -167,9 +178,21 @@
       pointer-events: auto;
     }
 
-    #closeBtn { top: 10px; right: 20px; }
-    #prevBtn { left: 20px; bottom: 20px; }
-    #nextBtn { right: 20px; bottom: 20px; }
+    #closeBtn {
+      top: 10px;
+      right: 20px;
+    }
+
+    #prevBtn {
+      left: 20px;
+      bottom: 20px;
+    }
+
+    #nextBtn {
+      right: 20px;
+      bottom: 20px;
+    }
+
   </style>
 </head>
 <body>
@@ -184,6 +207,7 @@
   </header>
 
   <div id="albumMenu" class="hidden"></div>
+
   <div id="gallery"></div>
 
   <div id="overlay">
@@ -208,6 +232,7 @@
     let currentAlbum = "";
     let currentIndex = 0;
     let currentImages = [];
+    let controlsVisible = true;
 
     menuToggle.addEventListener("click", () => {
       albumMenu.classList.toggle("hidden");
@@ -233,7 +258,6 @@
         loadAlbum(albums[0]);
       });
 
-    // Fotoğrafları yukarıdan aşağı sırayla yerleştir
     function loadAlbum(album) {
       gallery.innerHTML = "Yükleniyor...";
       fetch(`Galeri/${album}/index.json`)
@@ -242,41 +266,27 @@
           currentAlbum = album;
           currentImages = images;
           gallery.innerHTML = "";
-          const count = getColumnCount();
-
-          // her sütuna sırayla dağıt
-          const columns = Array.from({ length: count }, () => []);
-          images.forEach((filename, i) => {
-            columns[i % count].push(filename);
+          images.forEach((filename, idx) => {
+            const box = document.createElement("div");
+            box.className = "photo-box";
+            const img = document.createElement("img");
+            img.src = `Galeri/${album}/${filename}`;
+            img.onclick = () => showOverlay(idx);
+            box.appendChild(img);
+            gallery.appendChild(box);
           });
-
-          // sütunları DOM'a sırayla ekle
-          for (let col of columns) {
-            col.forEach((filename, idx) => {
-              const box = document.createElement("div");
-              box.className = "photo-box";
-              const img = document.createElement("img");
-              img.src = `Galeri/${album}/${filename}`;
-              img.onclick = () => showOverlay(images.indexOf(filename));
-              box.appendChild(img);
-              gallery.appendChild(box);
-            });
-          }
         })
         .catch(() => gallery.innerHTML = "Fotoğraflar yüklenemedi.");
     }
 
-    // Ekran yönüne göre sütun sayısı belirle
-    function getColumnCount() {
-      return window.innerWidth > window.innerHeight ? 3 : 2;
-    }
-
     function showOverlay(index) {
       overlay.style.display = "flex";
+      overlay.classList.add("show-controls");
+      overlay.classList.remove("hide-controls");
+      controlsVisible = true;
       currentIndex = index;
       overlayImage.src = `Galeri/${currentAlbum}/${currentImages[index]}`;
       imageCounter.textContent = `(${index + 1}/${currentImages.length})`;
-      overlay.classList.add("show-controls");
     }
 
     function hideOverlay() {
@@ -297,4 +307,6 @@
   </script>
 </body>
 </html>
+
+
 
