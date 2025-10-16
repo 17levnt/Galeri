@@ -82,7 +82,7 @@
 #gallery {
   display: grid;
   gap: 8px; /* Öğeler arası eşit boşluk */
-  padding: 50px;
+  padding: 58px;
 }
 
 /* Dikey ekran (9:16) → 2 sütun */
@@ -103,16 +103,15 @@
 .photo-box {
   background: #000; /* Boş kalan kısımlar siyah olacak */
   overflow: hidden;
-  border-radius: 0px;
+  border-radius: 4px;
   
-  width: %100;
-  height: 
   /* Kare yapmanın anahtarı: */
-  /*width: 100%; 
-  /*padding-top: 100%; /* Yüksekliği genişliğe eşitle (1:1 en boy oranı) */
-  /*position: relative; 
-  
+  width: 100%; 
+  padding-top: 100%; /* Yüksekliği genişliğe eşitle (1:1 en boy oranı) */
+  position: relative; 
 }
+ 
+/* Fazla olan .photo-box tanımını siliyoruz */
 
 /* 'photo-box img' kuralını sığdırma (contain) olarak güncelliyoruz */
 .photo-box img {
@@ -134,28 +133,25 @@
   transition: transform 0.3s ease;
 }
 
-    .photo-box img:hover {
-      transform: scale(1.01);
-    }
+    /* --- OVERLAY (Fotoğraf büyük görünümü) --- */
+    #overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 1000;
+      /* Kaydırma için dokunmatik aksiyonu etkinleştir */
+      touch-action: pan-y; 
+    }
 
-    /* --- OVERLAY (Fotoğraf büyük görünümü) --- */
-    #overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.96);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      z-index: 1000;
-      touch-action: manipulation;
-    }
-
-    #overlay img {
-      max-width: 90vw;
-      max-height: 90vh;
-    }
+    #overlay img {
+      max-width: 90vw;
+      max-height: 90vh;
+    }
 
     #overlay span {
       color: #fff;
@@ -374,6 +370,7 @@
   </script>
 </body>
 </html>
+
 
 
 
