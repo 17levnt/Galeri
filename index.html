@@ -161,99 +161,57 @@
     /* --- GALERİ (Masonry düzeni) --- */
 
 #gallery {
-
-  column-gap: 8px; /* sütunlar arası eşit boşluk */
-
+  display: grid;
+  /* Ekran genişliğine göre sütun sayısını dinamik olarak ayarla (örneğin min 150px kareler) */
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px; /* Öğeler arası boşluk */
   padding: 58px;
-
 }
 
 
-
-/* Dikey ekran (9:16) → 2 sütun */
-
+/* --- Yönlendirme (Portrait/Landscape) için grid ayarlarını koruyabiliriz --- */
 @media screen and (orientation: portrait) {
-
   #gallery {
-
-    column-count: 2;
-
+    grid-template-columns: repeat(auto-fill, minmax(40vw, 1fr)); /* Dikeyde daha az, büyük kare */
   }
-
 }
-
-
-
-/* Yatay ekran (16:9) → 3 sütun */
-
 @media screen and (orientation: landscape) {
-
   #gallery {
-
-    column-count: 3;
-
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Yatayda daha çok, küçük kare */
   }
-
 }
 
-
-
-/* Fotoğraf kutuları sütun akışına göre hizalanacak */
-
+/* Fotoğraf kutularının kare olmasını sağla */
 .photo-box {
-
-  display: inline-block;
-
-  width: 100%;
-
-  margin-bottom: 8px; /* alt boşluk — sütunlar arası akış */
-
   background: #000;
-
   overflow: hidden;
-
   border-radius: 4px;
 
+  /* Kare yapmanın anahtarı: */
+  width: 100%; /* Sütun genişliğini kapla */
+  padding-top: 100%; /* Yüksekliği genişliğe eşitle (1:1 en boy oranı) */
+  position: relative; /* İçindeki img'yi konumlandırmak için */
 }
 
-    }
 
 
-
-    .photo-box {
-
-      overflow: hidden;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: center;
-
-      background: #000;
-
-    }
-
-
-
- .photo-box img {
-
+.photo-box img {
+  /* img'yi kapsayıcının (photo-box'ın) içine sığdır */
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-
-  height: auto;
+  height: 100%;
+  
+  /* Görseli kareye sığdırmak için: */
+  object-fit: cover; /* Resmi en boy oranını bozmadan kapsayıcıyı doldurur */
+  object-position: center; /* Resmi ortalar */
 
   display: block;
-
   cursor: pointer;
-
   user-select: none;
-
   -webkit-user-drag: none;
-
   transition: transform 0.3s ease;
-
-  object-fit: cover;
-
 }
 
 
@@ -615,3 +573,4 @@
 </body>
 
 </html>
+
