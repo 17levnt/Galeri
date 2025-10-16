@@ -222,51 +222,51 @@
   </div>
 
   <script>
-    const menuToggle = document.getElementById("menuToggle");
-    const albumMenu = document.getElementById("albumMenu");
-    const gallery = document.getElementById("gallery");
-    const overlay = document.getElementById("overlay");
-    const overlayImage = document.getElementById("overlayImage");
-    const imageCounter = document.getElementById("imageCounter");
-    const closeBtn = document.getElementById("closeBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
+    const menuToggle = document.getElementById("menuToggle");
+    const albumMenu = document.getElementById("albumMenu");
+    const gallery = document.getElementById("gallery");
+    const overlay = document.getElementById("overlay");
+    const overlayImage = document.getElementById("overlayImage");
+    const imageCounter = document.getElementById("imageCounter");
+    const closeBtn = document.getElementById("closeBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
 
-    let currentAlbum = "";
-    let currentIndex = 0;
-    let currentImages = []; 
-    let controlsVisible = false; // Başlangıçta kontroller gizli
+    let currentAlbum = "";
+    let currentIndex = 0;
+    let currentImages = [];
+    let controlsVisible = false; // Başlangıçta kontroller gizli
 
-    // Kaydırma (Swipe) için değişkenler
-    let touchStartX = 0;
-    let touchEndX = 0;
-    const swipeThreshold = 50; // Kaydırma için minimum piksel mesafesi
+    // Kaydırma (Swipe) için değişkenler
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const swipeThreshold = 50; // Kaydırma için minimum piksel mesafesi
 
-    // --- Olay Dinleyicileri ---
-    menuToggle.addEventListener("click", () => {
-        albumMenu.classList.toggle("hidden");
-    });
+    // --- Olay Dinleyicileri ---
+    menuToggle.addEventListener("click", () => {
+      albumMenu.classList.toggle("hidden");
+    });
 
-    closeBtn.onclick = hideOverlay;
-    prevBtn.onclick = () => showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
-    nextBtn.onclick = () => showOverlay((currentIndex + 1) % currentImages.length);
+    closeBtn.onclick = hideOverlay;
+    prevBtn.onclick = () => showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
+    nextBtn.onclick = () => showOverlay((currentIndex + 1) % currentImages.length);
 
     // Yeni: Büyük fotoğrafa tıklayınca kontrolleri göster/gizle
     overlayImage.addEventListener("click", toggleControls);
 
-    // Overlay dışına tıklayınca kapatma
-    overlay.addEventListener("click", (e) => {
-        if (e.target === overlay) hideOverlay();
-    });
+    // Overlay dışına tıklayınca kapatma
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) hideOverlay();
+    });
 
-    // Klavye kontrolleri
-    document.addEventListener("keydown", e => {
-        if (overlay.style.display === "flex") {
-            if (e.key === "ArrowRight") showOverlay((currentIndex + 1) % currentImages.length);
-            if (e.key === "ArrowLeft") showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
-            if (e.key === "Escape") hideOverlay();
-        }
-    });
+    // Klavye kontrolleri
+    document.addEventListener("keydown", e => {
+      if (overlay.style.display === "flex") {
+        if (e.key === "ArrowRight") showOverlay((currentIndex + 1) % currentImages.length);
+        if (e.key === "ArrowLeft") showOverlay((currentIndex - 1 + currentImages.length) % currentImages.length);
+        if (e.key === "Escape") hideOverlay();
+      }
+    });
 
     // --- Fonksiyonlar ---
     
@@ -304,87 +304,74 @@
                 // Sağa kaydırma (previous/geri)
                 prevBtn.click();
             }
+            // Kaydırma yapıldıktan sonra geçici olarak kontrolleri göster (isteğe bağlı, daha iyi UX için)
+            if (!controlsVisible) toggleControls(); 
         }
     }
 
+    // Albümleri yükle (albums.json'dan)
+    fetch("Galeri/albums.json")
+      .then(res => res.json())
+      .then(albums => {
+        albums.forEach(album => {
+          const div = document.createElement("div");
+          div.textContent = album;
+          div.onclick = () => {
+            loadAlbum(album);
+            albumMenu.classList.add("hidden");
+          };
+          albumMenu.appendChild(div);
+        });
+        loadAlbum(albums[0]); // İlk albümü yükle
+      });
 
-    async function loadAlbums() {
-        // Bu kısım, albüm listesini manuel olarak tuttuğumuz eski mantıkla çalışmaya devam eder.
-        const staticAlbums = ["Doga", "Sehirler", "Portreler"]; 
-        
-        if (staticAlbums.length > 0) {
-            staticAlbums.forEach(album => {
-                const div = document.createElement("div");
-                div.textContent = album;
-                div.onclick = () => {
-                    loadAlbum(album);
-                    albumMenu.classList.add("hidden");
-                };
-                albumMenu.appendChild(div);
-            });
-            loadAlbum(staticAlbums[0]);
-        } else {
-            gallery.innerHTML = "Hiç albüm bulunamadı.";
-        }
-    }
+    function loadAlbum(album) {
+      gallery.innerHTML = "Yükleniyor...";
+      fetch(`Galeri/${album}/index.json`)
+        .then(res => res.json())
+        .then(images => {
+          currentAlbum = album;
+          // Sadece fotoğraf dosyalarını filtrele (önceki isteklerinizden koruma)
+          currentImages = images.filter(filename => /\.(jpe?g|png|gif|webp)$/i.test(filename)); 
+          gallery.innerHTML = "";
 
+          if (currentImages.length === 0) {
+             gallery.innerHTML = "Bu albümde fotoğraf bulunamadı.";
+             return;
+          }
+          
+          currentImages.forEach((filename, idx) => {
+            const box = document.createElement("div");
+            box.className = "photo-box";
+            const img = document.createElement("img");
+            img.src = `Galeri/${album}/${filename}`;
+            img.onclick = () => showOverlay(idx);
+            box.appendChild(img);
+            gallery.appendChild(box);
+          });
+        })
+        .catch(() => gallery.innerHTML = "Fotoğraflar yüklenemedi. `index.json` dosyasını kontrol edin.");
+    }
 
-    function loadAlbum(album) {
-        gallery.innerHTML = "Yükleniyor...";
-        
-        fetch(`Galeri/${album}/index.json`)
-            .then(res => res.json())
-            .then(images => {
-                currentAlbum = album;
-                currentImages = images.filter(filename => /\.(jpe?g|png|gif|webp)$/i.test(filename));
-                gallery.innerHTML = "";
-                
-                if (currentImages.length === 0) {
-                     gallery.innerHTML = "Bu albümde fotoğraf bulunamadı.";
-                     return;
-                }
+    function showOverlay(index) {
+      overlay.style.display = "flex";
+      
+      // Yeni: Kontrolleri varsayılan olarak gizle
+      controlsVisible = false;
+      overlay.classList.remove("show-controls");
 
-                currentImages.forEach((filename, idx) => {
-                    const box = document.createElement("div");
-                    box.className = "photo-box";
-                    const img = document.createElement("img");
-                    img.src = `Galeri/${album}/${filename}`;
-                    img.onclick = (e) => {
-                        e.preventDefault();
-                        showOverlay(idx);
-                    };
-                    img.onerror = () => {
-                        console.error(`Resim yüklenemedi: ${img.src}`);
-                        box.style.display = 'none';
-                    };
-                    box.appendChild(img);
-                    gallery.appendChild(box);
-                });
-            })
-            .catch(() => gallery.innerHTML = "Fotoğraflar yüklenemedi. `index.json` dosyasını kontrol edin.");
-    }
+      currentIndex = index;
+      overlayImage.src = `Galeri/${currentAlbum}/${currentImages[index]}`;
+      imageCounter.textContent = `(${index + 1}/${currentImages.length})`;
+    }
 
-    function showOverlay(index) {
-        overlay.style.display = "flex";
-        
-        // Yeni: Kontrolleri varsayılan olarak gizle
-        controlsVisible = false;
-        overlay.classList.remove("show-controls");
-        
-        currentIndex = index;
-        overlayImage.src = `Galeri/${currentAlbum}/${currentImages[index]}`;
-        imageCounter.textContent = `(${index + 1}/${currentImages.length})`;
-    }
-
-    function hideOverlay() {
-        overlay.style.display = "none";
-    }
-
-    // İlk albümleri yükle
-    loadAlbums(); 
-</script>
+    function hideOverlay() {
+      overlay.style.display = "none";
+    }
+  </script>
 </body>
 </html>
+
 
 
 
