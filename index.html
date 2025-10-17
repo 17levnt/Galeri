@@ -22,7 +22,7 @@
 
       font-family: "Inter", sans-serif;
 
-      color: #ddd;
+      color: #fff;
 
       overflow-x: hidden;
 
@@ -158,14 +158,14 @@
 /* --- GALERİ (Kare Izgara ve Sütun Kontrolü) --- */
 #gallery {
   display: grid;
-  gap: 15px; /* Öğeler arası eşit boşluk */
-  padding: 60px;
+  gap: 0px; /* Öğeler arası eşit boşluk */
+  padding: 0px;
 }
 
 /* Dikey ekran (9:16) → 2 sütun */
 @media screen and (orientation: portrait) {
   #gallery {
-    grid-template-columns: repeat(3, 1fr); /* Tam 2 sütun */
+    grid-template-columns: repeat(2, 1fr); /* Tam 2 sütun */
   }
 }
 
@@ -173,6 +173,9 @@
 @media screen and (orientation: landscape) {
   #gallery {
     grid-template-columns: repeat(4, 1fr); /* Tam 3 sütun */
+  width: 100%; 
+  padding-top: 100%; /* Yüksekliği genişliğe eşitle (1:1 en boy oranı) */
+  position: relative; 
   }
 }
 
@@ -573,6 +576,7 @@
 </body>
 
 </html>
+
 
 
 
