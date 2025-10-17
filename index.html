@@ -158,8 +158,11 @@
 /* --- GALERİ (Kare Izgara ve Sütun Kontrolü) --- */
 #gallery {
   display: grid;
-  gap: 0px; /* Öğeler arası eşit boşluk */
-  padding: 0px;
+  gap: 10px; /* Öğeler arası eşit boşluk */
+  /*padding: 50px;*/
+  width: 100%; 
+  padding-top: 100%; /* Yüksekliği genişliğe eşitle (1:1 en boy oranı) */
+  position: relative; 
 }
 
 /* Dikey ekran (9:16) → 2 sütun */
@@ -173,9 +176,6 @@
 @media screen and (orientation: landscape) {
   #gallery {
     grid-template-columns: repeat(4, 1fr); /* Tam 3 sütun */
-  width: 100%; 
-  padding-top: 100%; /* Yüksekliği genişliğe eşitle (1:1 en boy oranı) */
-  position: relative; 
   }
 }
 
@@ -576,6 +576,7 @@
 </body>
 
 </html>
+
 
 
 
