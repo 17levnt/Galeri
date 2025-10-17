@@ -18,11 +18,11 @@
 
       margin: 0;
 
-      background: #111;
+      background: #000;
 
       font-family: "Inter", sans-serif;
 
-      color: #000;
+      color: #ddd;
 
       overflow-x: hidden;
 
@@ -94,7 +94,7 @@
 
       background-color: #000;
 
-      border-radius: 1px;
+      border-radius: 0px;
 
     }
 
@@ -114,11 +114,9 @@
 
       border: 1px solid rgba(0, 0, 0, 0.15);
 
-      border-radius: 12px;
+      border-radius: 0px;
 
       padding: 12px 0;
-
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 
       z-index: 100;
 
@@ -160,21 +158,21 @@
 /* --- GALERİ (Kare Izgara ve Sütun Kontrolü) --- */
 #gallery {
   display: grid;
-  gap: 8px; /* Öğeler arası eşit boşluk */
-  padding: 58px;
+  gap: 15px; /* Öğeler arası eşit boşluk */
+  padding: 60px;
 }
 
 /* Dikey ekran (9:16) → 2 sütun */
 @media screen and (orientation: portrait) {
   #gallery {
-    grid-template-columns: repeat(2, 1fr); /* Tam 2 sütun */
+    grid-template-columns: repeat(3, 1fr); /* Tam 2 sütun */
   }
 }
 
 /* Yatay ekran (16:9) → 3 sütun */
 @media screen and (orientation: landscape) {
   #gallery {
-    grid-template-columns: repeat(3, 1fr); /* Tam 3 sütun */
+    grid-template-columns: repeat(4, 1fr); /* Tam 3 sütun */
   }
 }
 
@@ -182,7 +180,7 @@
 .photo-box {
   background: #000; /* Boş kalan kısımlar siyah olacak */
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 0px;
   
   /* Kare yapmanın anahtarı: */
   width: 100%; 
@@ -340,6 +338,13 @@
     }
 
 
+    #imageCounter {
+
+     font-size: 20px;
+
+    }
+
+
 
   </style>
 
@@ -379,11 +384,11 @@
 
     <button id="closeBtn">✕</button>
 
-    <button id="prevBtn">‹</button>
+    <button id="prevBtn">   ‹   </button>
 
     <img id="overlayImage" src="" alt="">
 
-    <button id="nextBtn">›</button>
+    <button id="nextBtn">   ›   </button>
 
     <span id="imageCounter"></span>
 
@@ -568,6 +573,7 @@
 </body>
 
 </html>
+
 
 
 
